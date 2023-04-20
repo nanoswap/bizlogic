@@ -1,6 +1,6 @@
 syntax = "proto3";
 package nanoswap.message;
-import "nanoswap/message/loan_payment.proto";
+import "loan_payment.proto";
 
 import "google/protobuf/timestamp.proto";
 

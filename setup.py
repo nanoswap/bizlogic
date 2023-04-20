@@ -1,7 +1,7 @@
 """Setup."""
 from setuptools import find_packages, setup
 
-from ipfsclient import __version__
+from bizlogic import __version__
 
 
 def load_long_description(filename: str) -> str:
@@ -11,22 +11,22 @@ def load_long_description(filename: str) -> str:
 
 
 setup(
-    name="ipfsclient",
+    name="bizlogic",
     version=__version__,
     author="Nathaniel Schultz",
     author_email="nate@nanoswap.finance",
-    description="IPFS RPC Client",
+    description="NanoSwap Business Logic",
     long_description=load_long_description("README.md"),
     long_description_content_type="text/markdown",
-    url="https://github.com/nanoswap/ipfsclient",
+    url="https://github.com/nanoswap/bizlogic",
     project_urls={
-        "Bug Tracker": "https://github.com/nanoswap/ipfsclient/issues",
+        "Bug Tracker": "https://github.com/nanoswap/bizlogic/issues",
     },
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: The Unlicense (Unlicense)"
     ],
     python_requires=">=3.11",
-    package_dir={'ipfsclient': "ipfsclient"},
+    package_dir={'bizlogic': "bizlogic"},
     packages=find_packages(exclude=['tests', 'tests.*']),
 )

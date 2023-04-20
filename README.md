@@ -1,6 +1,6 @@
-# ipfsclient
+# BizLogic
 
-IPFS RPC Client
+Some nanoswap business logic
 
 ![](https://img.shields.io/readthedocs/ipfsclient?label=readthedocs)
 ![](https://img.shields.io/github/actions/workflow/status/nanoswap/ipfsclient/test.yml?label=tests)
@@ -20,12 +20,12 @@ IPFS RPC Client
 ## Installation
 
 ```
-pip install ipfsclient
+pip install bizlogic
 ```
 
 ## Documentation
 
-https://ipfsclient.readthedocs.io/
+https://bizlogic.readthedocs.io/
 
 ### Build docs locally
 `mkdocs serve`
@@ -38,8 +38,7 @@ To run all checks: `nox`
 
 #### Regenerate pb2.py files 
 ```
-cd protobuf;
-protoc --python_out=../proto --proto_path=protobuf protobuf/sample.proto
+protoc --python_out=protoc --proto_path=protobuf protobuf/*.proto
 ```
 
 #### Ipfs setup

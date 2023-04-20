@@ -9,9 +9,13 @@ DIR = Path(__file__).parent.resolve()
 @nox.session(python=["python3.11"])
 def build(session: nox.Session) -> None:
     """Build the dist."""
-    dist_p = DIR.joinpath("dist")
-    if dist_p.exists():
-        shutil.rmtree(dist_p)
+    dist_path = DIR.joinpath("dist")
+    if dist_path.exists():
+        shutil.rmtree(dist_path)
+
+    build_path = DIR.joinpath("build")
+    if build_path.exists():
+        shutil.rmtree(build_path)
 
     session.install("poetry")
     session.run("poetry", "build")
@@ -38,7 +42,7 @@ def lint(session: nox.Session) -> None:
 
     # lint the source code
     session.run(
-        'flake8', 'ipfsclient',
+        'flake8', 'bizlogic',
         '--docstring-convention', 'google',
         '--ignore=D100,D104'
     )
