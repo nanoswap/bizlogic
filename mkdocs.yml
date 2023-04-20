@@ -1,0 +1,20 @@
+site_name: "ipfsclient"
+repo_url: https://github.com/nanoswap/ipfsclient
+edit_uri: blob/main/docs/
+
+nav:
+  - Home: 'index.md'
+  - Classes:
+      - 'Ipfs': 'classes_ipfs.md'
+  - About:
+      - 'License': 'LICENSE.md'
+
+theme:
+  name: "readthedocs"
+
+plugins:
+- search
+- mkdocstrings:
+    handlers:
+      python:
+        paths: [.]  # actually not needed, default
