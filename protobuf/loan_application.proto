@@ -1,0 +1,10 @@
+syntax = "proto3";
+package nanoswap.message;
+
+import "google/protobuf/timestamp.proto";
+
+// ipfs filename:
+//   application/borrower_<id>
+message LoanApplication {
+    int64 amount_asking = 1;
+}

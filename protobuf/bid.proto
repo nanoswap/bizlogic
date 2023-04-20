@@ -1,0 +1,14 @@
+syntax = "proto3";
+package nanoswap.message;
+import "nanoswap/message/loan_payment.proto";
+
+import "google/protobuf/timestamp.proto";
+
+// ipfs filename:
+//   bid/borrower_<id>.lender_<id>/bid_<id>
+message Bid {
+    int64 lending_amount = 1;
+    repeated nanoswap.message.LoanPayment repayment_schedule = 2;
+    google.protobuf.Timestamp offer_expiry = 3;
+    optional string transaction = 4; // for accepted bids, this is the transaction id of the bid
+}
