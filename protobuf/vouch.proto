@@ -7,8 +7,8 @@ import "google/protobuf/timestamp.proto";
 // "vouchee": person receiving the vouch
 
 // ipfs filename:
-//   vouch/vouch_<vouchee_id>
+//   vouch/vouch_<vouchee_id>/version_<version>
 message Vouch {
     string voucher = 1;
-    google.protobuf.Timestamp timestamp = 2;
+    google.protobuf.Timestamp created = 2;
 }
