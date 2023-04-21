@@ -4,7 +4,7 @@ version = "0.0.1"
 description = "web3 lending platform business logic"
 authors = ["Nate Schultz <nate.schultz@outlook.com>"]
 readme = "README.md"
-packages = [{include = "ipfskvs"}]
+packages = [{include = "bizlogic"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"

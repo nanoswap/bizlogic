@@ -2,7 +2,9 @@ syntax = "proto3";
 package nanoswap.message;
 
 // ipfs filename:
-//   application/borrower_<id>
+//   application/borrower_<id>/version_<version>
 message LoanApplication {
     int64 amount_asking = 1;
+    google.protobuf.Timestamp created = 6;
+    optional google.protobuf.Timestamp closed = 6;
 }
