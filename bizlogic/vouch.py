@@ -40,7 +40,7 @@ class VouchWriter():
 
         data = Vouch(amount_asking=amount_asking)
         self.store(index=index, ipfs=ipfsclient, writer=data)
-        self.store.write()
+        self.store.add()
 
 class VouchReader():
     ipfsclient: Ipfs

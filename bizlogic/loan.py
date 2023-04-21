@@ -82,7 +82,7 @@ class LoanWriter():
             writer=self.data
         )
 
-        store.write()
+        store.add()
     
     def _generate_index(self):
         self.index = Index(
@@ -190,7 +190,7 @@ class LoanReader():
         return [
             loan
             for loan in loans
-            if LoanStatus.loan_status(loan) == status
+            if LoanStatus.loan_status(loan.reader) == status
         ]
 
     def query_for_borrower(self: Self, borrower: str):

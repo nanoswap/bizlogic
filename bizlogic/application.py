@@ -39,7 +39,7 @@ class LoanApplicationWriter():
             writer=self.data
         )
 
-        store.write()
+        store.add()
     
     def _generate_index(self):
         self.index = Index(
@@ -84,5 +84,5 @@ class LoanApplicationReader():
         return [
             application
             for application in applications
-            if not application.closed
+            if not application.reader.closed
         ]
