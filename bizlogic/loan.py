@@ -110,13 +110,13 @@ class Loan():
 
 
     def accept_terms(self: Self):
-        self._generate_index()
         self.data = Loan(
             principal_amount=self.data.principal_amount,
             repayment_schedule=self.data.repayment_schedule,
             offer_expiry=self.data.offer_expiry,
             accepted=True
         )
+        self._generate_index()
         self._write()
 
 
@@ -136,5 +136,24 @@ class Loan():
 
         raise
 
-    def made_payment(self: Self, payment_id: str, transaction: str):
-        pass
+    def register_payment(self: Self, payment_id: str, transaction: str):
+        new_repayment_schedule = []
+        for payment in self.data.repayment_schedule:
+            if payment.payment_id == payment_id:
+                new_repayment_schedule.append(LoanPayment(
+                    payment_id=payment_id,
+                    amount_due=payment.amount_due_each_payment,
+                    due_date=payment.timestamp,
+                    transaction=transaction
+                ))
+            else:
+                new_repayment_schedule.append(payment)
+        
+        self.data = Loan(
+            principal_amount=self.data.principal_amount,
+            repayment_schedule=self.data.repayment_schedule,
+            offer_expiry=self.data.offer_expiry,
+            accepted=self.data.accepted
+        )
+        self._generate_index()
+        self._write()
