@@ -5,9 +5,10 @@ import "google/protobuf/timestamp.proto";
 
 
 message LoanPayment {
-    int64 amount_due = 1;
-    google.protobuf.Timestamp due_date = 2;
-    optional string transaction = 3; // for completed payments, this is the transaction id of the payment
+    string payment_id = 1;
+    int64 amount_due = 2;
+    google.protobuf.Timestamp due_date = 3;
+    optional string transaction = 4; // for completed payments, this is the transaction id of the payment
 }
 
 

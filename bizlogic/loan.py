@@ -16,7 +16,12 @@ from protoc.loan_pb2 import Loan, LoanPayment
 #   loan/borrower_<id>.lender_<id>/loan_<id>/created_<timestamp>
 
 class Loan():
-    store: Store
+    loan_id: str
+    borrower: str
+    lender: str
+    index: Index
+    data: Loan
+    ipfsclient: Ipfs
 
     def __init__(
             self: Self,
@@ -28,11 +33,34 @@ class Loan():
             offer_expiry: datetime.date) -> None:
         """Construct a new unaccepted loan and write it."""
         self.loan_id = str(uuid.uuid4())
-        index = Index(
+        self.borrower = borrower
+        self.lender = lender
+        self._generate_index()
+        self.ipfsclient = ipfs
+        self.data = Loan(
+            principal_amount=principal_amount,
+            repayment_schedule=repayment_schedule,
+            offer_expiry=offer_expiry,
+            accepted=False
+        )
+
+    
+    def _write(self):
+
+        store = Store(
+            index=self.index,
+            ipfs=self.ipfsclient,
+            writer=self.data
+        )
+
+        store.write()
+    
+    def _generate_index(self):
+        self.index = Index(
             prefix="loan",
             index={
-                "borrower": borrower,
-                "lender": lender,
+                "borrower": self.borrower,
+                "lender": self.lender,
             },
             subindex=Index(
                 index={
@@ -45,21 +73,6 @@ class Loan():
                 )
             )
         )
-
-        data = Loan(
-            principal_amount=principal_amount,
-            repayment_schedule=repayment_schedule,
-            offer_expiry=offer_expiry,
-            accepted=False
-        )
-
-        self.store = Store(
-            index=index,
-            ipfs=ipfs,
-            writer=data
-        )
-
-        self.store.write()
 
     @staticmethod
     def create_payment_schedule(
@@ -89,6 +102,7 @@ class Loan():
             timestamp.FromDatetime(first_payment + payment_interval * total_duration)
             # format the data
             loan_payment = LoanPayment(
+                payment_id=str(uuid.uuid4()),
                 amount_due=amount_due_each_payment,
                 due_date=timestamp
             )
@@ -96,8 +110,31 @@ class Loan():
 
 
     def accept_terms(self: Self):
-        pass
+        self._generate_index()
+        self.data = Loan(
+            principal_amount=self.data.principal_amount,
+            repayment_schedule=self.data.repayment_schedule,
+            offer_expiry=self.data.offer_expiry,
+            accepted=True
+        )
+        self._write()
 
 
     def check_bid_status(self: Self):
+        now = datetime.datetime.now()
+        if self.data.offer_expiry <= now and not self.data.accepted:
+            return "PENDING_ACCEPTANCE"
+        
+        elif self.data.offer_expiry > now and not self.data.accepted:
+            return "EXPIRED_UNACCEPTED"
+        
+        elif self.data.offer_expiry <= now and self.data.accepted:
+            return "ACCEPTED"
+        
+        elif self.data.offer_expiry > now and self.data.accepted:
+            return "ACCEPTED"
+
+        raise
+
+    def made_payment(self: Self, payment_id: str, transaction: str):
         pass
