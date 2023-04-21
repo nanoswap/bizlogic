@@ -6,7 +6,7 @@ from typing import List, Self
 
 from google.protobuf.timestamp_pb2 import Timestamp
 
-from ifpskvs.store import Store
+from ipfskvs.store import Store
 from ipfsclient.ipfs import Ipfs
 from ipfskvs.index import Index
 
@@ -15,7 +15,7 @@ from protoc.loan_pb2 import Loan, LoanPayment
 # ipfs filename:
 #   loan/borrower_<id>.lender_<id>/loan_<id>/created_<timestamp>
 
-class Loan():
+class LoanWriter():
     loan_id: str
     borrower: str
     lender: str

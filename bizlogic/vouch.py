@@ -7,16 +7,21 @@ from typing import Self
 #   vouch/vouchee_<id>.voucher_<id>/created_<timestamp>
 
 from ipfskvs.index import Index
-from ifpskvs.store import Store
+from ipfskvs.store import Store
 from ipfsclient.ipfs import Ipfs
 
 from protoc.vouch_pb2 import Vouch
 
 
-class Vouch():
+class VouchWriter():
     store: Store
 
-    def __init__(self: Self, voucher: str, vouchee: str, amount_asking: int):
+    def __init__(
+            self: Self,
+            voucher: str,
+            vouchee: str,
+            amount_asking: int,
+            ipfsclient: Ipfs) -> None:
         """Constructor"""
         index = Index(
             prefix="application",
@@ -32,6 +37,5 @@ class Vouch():
         )
 
         data = Vouch(amount_asking=amount_asking)
-
-        self.store(index=index, ipfs=Ipfs(), writer=data)
+        self.store(index=index, ipfs=ipfsclient, writer=data)
         self.store.write()
