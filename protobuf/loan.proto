@@ -12,7 +12,7 @@ message LoanPayment {
 
 
 // ipfs filename:
-//   bid/borrower_<id>.lender_<id>/bid_<id>/created_<timestamp>
+//   bid/borrower_<id>.lender_<id>/loan_<id>/created_<timestamp>
 message Loan {
     int64 principal_amount = 1;
     repeated LoanPayment repayment_schedule = 2;

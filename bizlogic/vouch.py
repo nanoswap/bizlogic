@@ -33,5 +33,5 @@ class Vouch():
 
         data = Vouch(amount_asking=amount_asking)
 
-        self.store(index=index, ipfs=Ipfs(), write=data)
+        self.store(index=index, ipfs=Ipfs(), writer=data)
         self.store.write()
