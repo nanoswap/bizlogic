@@ -4,9 +4,8 @@ package nanoswap.message;
 import "google/protobuf/timestamp.proto";
 
 // ipfs filename:
-//   application/borrower_<id>/version_<version>
+//   application/borrower_<id>/created_<timestamp>
 message LoanApplication {
     int64 amount_asking = 1;
-    google.protobuf.Timestamp created = 2;
     optional google.protobuf.Timestamp closed = 3;
 }

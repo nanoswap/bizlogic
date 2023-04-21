@@ -1,14 +1,11 @@
 syntax = "proto3";
 package nanoswap.message;
 
-import "google/protobuf/timestamp.proto";
-
 // "voucher": person giving the vouch
 // "vouchee": person receiving the vouch
 
 // ipfs filename:
-//   vouch/vouch_<vouchee_id>/version_<version>
+//   vouch/vouch_<vouchee_id>/created_<timestamp>
 message Vouch {
     string voucher = 1;
-    google.protobuf.Timestamp created = 2;
 }

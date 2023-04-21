@@ -1,0 +1,22 @@
+syntax = "proto3";
+package nanoswap.message;
+
+import "google/protobuf/timestamp.proto";
+
+
+message LoanPayment {
+    int64 amount_due = 1;
+    google.protobuf.Timestamp due_date = 2;
+    optional string transaction = 3; // for completed payments, this is the transaction id of the payment
+}
+
+
+// ipfs filename:
+//   bid/borrower_<id>.lender_<id>/bid_<id>/created_<timestamp>
+message Loan {
+    int64 principal_amount = 1;
+    repeated LoanPayment repayment_schedule = 2;
+    google.protobuf.Timestamp offer_expiry = 3;
+    optional string transaction = 4; // for accepted lending offers, this is the transaction id of the principal payment
+    bool accepted = 5; // accepted timestamp must be before offer_expiry
+}
