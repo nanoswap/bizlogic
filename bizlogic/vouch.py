@@ -43,5 +43,31 @@ class VouchWriter():
         self.store.write()
 
 class VouchReader():
-    def __init__(self: Self):
-        pass
+    ipfsclient: Ipfs
+
+    def __init__(self: Self, ipfsclient: Ipfs):
+        self.ipfsclient = ipfsclient
+
+    def get_vouchers_for_borrower(self: Self, borrower: str):
+        return Store.query(
+            query_index=Index(
+                prefix=PREFIX,
+                index={
+                    "voucher": borrower
+                }
+            ),
+            ipfs=self.ipfsclient,
+            reader=Vouch()
+        )
+
+    def get_vouchees_for_borrower(self: Self, borrower: str):
+        return Store.query(
+            query_index=Index(
+                prefix=PREFIX,
+                index={
+                    "vouchee": borrower
+                }
+            ),
+            ipfs=self.ipfsclient,
+            reader=Vouch()
+        )
