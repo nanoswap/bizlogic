@@ -7,5 +7,5 @@ import "google/protobuf/timestamp.proto";
 //   application/borrower_<id>/created_<timestamp>
 message LoanApplication {
     int64 amount_asking = 1;
-    optional google.protobuf.Timestamp closed = 3;
+    bool closed = 3;
 }

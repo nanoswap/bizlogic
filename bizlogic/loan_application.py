@@ -11,14 +11,39 @@ from protoc.loan_application_pb2 import LoanApplication
 #   application/borrower_<id>/created_<timestamp>
 
 class LoanApplication():
-    store: Store
+    borrower: str
+    amount_asking: int
+    ipfsclient: Ipfs
+    data: LoanApplication
 
-    def __init__(self: Self, borrower: str, amount_asking: int):
+    def __init__(self: Self, ipfsclient: Ipfs, borrower: str, amount_asking: int):
         """Constructor"""
-        index = Index(
+        self.borrower = borrower
+        self.ipfsclient = ipfsclient
+        self.amount_asking = amount_asking
+        self.data = LoanApplication(
+            amount_asking=self.amount_asking,
+            closed=False
+        )
+        self._generate_index()
+        self._write()
+
+    
+    def _write(self):
+
+        store = Store(
+            index=self.index,
+            ipfs=self.ipfsclient,
+            writer=self.data
+        )
+
+        store.write()
+    
+    def _generate_index(self):
+        self.index = Index(
             prefix="application",
             index={
-                "borrower": borrower
+                "borrower": self.borrower
             },
             subindex=Index(
                 index={
@@ -27,17 +52,13 @@ class LoanApplication():
             )
         )
 
-        data = LoanApplication(amount_asking=amount_asking)
-
-        self.store(index=index, ipfs=Ipfs(), write=data)
-        self.store.write()
-
-    def add_loan_application(self: Self):
-        pass
-
-
     def withdraw_loan_application(self: Self):
-        pass
+        self.data = LoanApplication(
+            amount_asking=self.amount_asking,
+            closed=True
+        )
+        self._generate_index()
+        self._write()
 
 
     def check_application_status(self: Self):
