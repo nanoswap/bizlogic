@@ -16,5 +16,6 @@
     options:
       members:
         - __init__
+        - get_open_loan_applications
       show_root_heading: true
       show_source: true

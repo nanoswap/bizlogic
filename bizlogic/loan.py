@@ -173,7 +173,7 @@ class LoanReader():
     def __init__(self: Self, ipfsclient: Ipfs):
         self.ipfsclient = ipfsclient
     
-    def get_loans_with_status(self: Self, status: LoanStatusType):
+    def query_for_status(self: Self, status: LoanStatusType):
         # get all applications from ipfs
         loans = Store.query(
             query_index=Index(
@@ -191,7 +191,7 @@ class LoanReader():
             if LoanStatus.loan_status(loan) == status
         ]
 
-    def get_loans_for_borrower(self: Self, borrower: str):
+    def query_for_borrower(self: Self, borrower: str):
         return Store.query(
             query_index=Index(
                 prefix=PREFIX,
@@ -203,7 +203,7 @@ class LoanReader():
             reader=Loan()
         )
 
-    def get_loans_for_lender(self: Self, lender: str):
+    def query_for_lender(self: Self, lender: str):
         return Store.query(
             query_index=Index(
                 prefix=PREFIX,
@@ -215,7 +215,7 @@ class LoanReader():
             reader=Loan()
         )
 
-    def get_payments_for_loan(self: Self, loan_id: str):
+    def query_for_loan(self: Self, loan_id: str):
         return Store.query(
             query_index=Index(
                 prefix=PREFIX,

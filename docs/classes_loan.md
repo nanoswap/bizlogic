@@ -1,5 +1,16 @@
 # Loan
 
+
+
+::: bizlogic.loan.LoanStatus
+    handler: python
+    options:
+      members:
+        - loan_status
+      show_root_heading: true
+      show_source: true
+
+
 ::: bizlogic.loan.LoanWriter
     handler: python
     options:
@@ -9,7 +20,19 @@
         - _generate_index
         - create_payment_schedule
         - accept_terms
-        - check_bid_status
         - register_payment
+      show_root_heading: true
+      show_source: true
+
+
+::: bizlogic.loan.LoanReader
+    handler: python
+    options:
+      members:
+        - __init__
+        - query_for_status
+        - query_for_borrower
+        - query_for_lender
+        - query_for_loan
       show_root_heading: true
       show_source: true
