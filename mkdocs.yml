@@ -1,11 +1,13 @@
-site_name: "ipfsclient"
-repo_url: https://github.com/nanoswap/ipfsclient
+site_name: "bizlogic"
+repo_url: https://github.com/nanoswap/bizlogic
 edit_uri: blob/main/docs/
 
 nav:
   - Home: 'index.md'
   - Classes:
-      - 'Ipfs': 'classes_ipfs.md'
+      - 'LoanApplication': 'classes_loan_application.md'
+      - 'Loan': 'classes_loan.md'
+      - 'Vouch': 'classes_vouch.md'
   - About:
       - 'License': 'LICENSE.md'
 
