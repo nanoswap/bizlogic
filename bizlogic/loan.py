@@ -28,16 +28,18 @@ class LoanStatus():
     @staticmethod
     def loan_status(loan):
         now = datetime.datetime.now()
-        if loan.offer_expiry <= now and not loan.accepted:
+        expiry = datetime.datetime.fromtimestamp(loan.offer_expiry.seconds) + datetime.timedelta(microseconds=loan.offer_expiry.nanos / 1000)
+
+        if expiry <= now and not loan.accepted:
             return LoanStatusType.PENDING_ACCEPTANCE
 
-        elif loan.offer_expiry > now and not loan.accepted:
+        elif expiry > now and not loan.accepted:
             return LoanStatusType.EXPIRED_UNACCEPTED
 
-        elif loan.offer_expiry <= now and loan.accepted:
+        elif expiry <= now and loan.accepted:
             return LoanStatusType.ACCEPTED
 
-        elif loan.offer_expiry > now and loan.accepted:
+        elif expiry > now and loan.accepted:
             return LoanStatusType.ACCEPTED
 
         raise
