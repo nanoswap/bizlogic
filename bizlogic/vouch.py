@@ -1,20 +1,37 @@
-
+import time
+from typing import Self
 # "voucher": person giving the vouch
 # "vouchee": person receiving the vouch
 
 # ipfs filename:
-#   vouch/vouch_<vouchee_id>/created_<timestamp>
+#   vouch/vouchee_<id>.voucher_<id>/created_<timestamp>
 
 from ipfskvs.index import Index
 from ifpskvs.store import Store
 from ipfsclient.ipfs import Ipfs
 
+from protoc.vouch_pb2 import Vouch
+
 
 class Vouch():
-    index: Index
+    store: Store
 
-    def __init__(self: Self):
-        pass
+    def __init__(self: Self, voucher: str, vouchee: str, amount_asking: int):
+        """Constructor"""
+        index = Index(
+            prefix="application",
+            index={
+                "vouchee": vouchee,
+                "voucher": voucher
+            },
+            subindex=Index(
+                index={
+                    "created": str(time.time_ns())
+                }
+            )
+        )
 
-    def add_vouch(self: Self):
-        pass
+        data = Vouch(amount_asking=amount_asking)
+
+        self.store(index=index, ipfs=Ipfs(), write=data)
+        self.store.write()

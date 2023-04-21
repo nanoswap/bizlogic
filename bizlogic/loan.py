@@ -26,7 +26,7 @@ class Loan():
             offer_expiry: datetime.date):
         """Construct a new unaccepted loan and write it."""
         index = Index(
-            prefix="bid",
+            prefix="loan",
             index={
                 "borrower": borrower,
                 "lender": lender,
