@@ -5,6 +5,7 @@ import uuid
 from typing import List, Self
 
 from google.protobuf.timestamp_pb2 import Timestamp
+from enum import Enum
 
 from ipfskvs.store import Store
 from ipfsclient.ipfs import Ipfs
@@ -12,8 +13,34 @@ from ipfskvs.index import Index
 
 from protoc.loan_pb2 import Loan, LoanPayment
 
+PREFIX="loan"
+
 # ipfs filename:
-#   loan/borrower_<id>.lender_<id>/loan_<id>/created_<timestamp>
+#   loan/borrower_<id>.lender_<id>.loan_<id>/created_<timestamp>
+
+class LoanStatusType(Enum):
+    PENDING_ACCEPTANCE = 1
+    EXPIRED_UNACCEPTED = 2
+    ACCEPTED = 3
+
+class LoanStatus():
+
+    @staticmethod
+    def loan_status(loan):
+        now = datetime.datetime.now()
+        if loan.offer_expiry <= now and not loan.accepted:
+            return LoanStatusType.PENDING_ACCEPTANCE
+
+        elif loan.offer_expiry > now and not loan.accepted:
+            return LoanStatusType.EXPIRED_UNACCEPTED
+
+        elif loan.offer_expiry <= now and loan.accepted:
+            return LoanStatusType.ACCEPTED
+
+        elif loan.offer_expiry > now and loan.accepted:
+            return LoanStatusType.ACCEPTED
+
+        raise
 
 class LoanWriter():
     loan_id: str
@@ -57,15 +84,13 @@ class LoanWriter():
     
     def _generate_index(self):
         self.index = Index(
-            prefix="loan",
+            prefix=PREFIX,
             index={
                 "borrower": self.borrower,
                 "lender": self.lender,
+                "loan": self.loan_id
             },
             subindex=Index(
-                index={
-                    "loan": self.loan_id
-                },
                 subindex=Index(
                     index={
                         "created": str(time.time_ns())
@@ -119,23 +144,6 @@ class LoanWriter():
         self._generate_index()
         self._write()
 
-
-    def check_bid_status(self: Self):
-        now = datetime.datetime.now()
-        if self.data.offer_expiry <= now and not self.data.accepted:
-            return "PENDING_ACCEPTANCE"
-        
-        elif self.data.offer_expiry > now and not self.data.accepted:
-            return "EXPIRED_UNACCEPTED"
-        
-        elif self.data.offer_expiry <= now and self.data.accepted:
-            return "ACCEPTED"
-        
-        elif self.data.offer_expiry > now and self.data.accepted:
-            return "ACCEPTED"
-
-        raise
-
     def register_payment(self: Self, payment_id: str, transaction: str):
         new_repayment_schedule = []
         for payment in self.data.repayment_schedule:
@@ -165,14 +173,56 @@ class LoanReader():
     def __init__(self: Self, ipfsclient: Ipfs):
         self.ipfsclient = ipfsclient
     
-    def get_loan_offers(self: Self):
-        pass
+    def get_loans_with_status(self: Self, status: LoanStatusType):
+        # get all applications from ipfs
+        loans = Store.query(
+            query_index=Index(
+                prefix=PREFIX,
+                index={}
+            ),
+            ipfs=self.ipfsclient,
+            reader=Loan()
+        )
+
+        # filter for unexpired and unaccepted loans
+        return [
+            loan
+            for loan in loans
+            if LoanStatus.loan_status(loan) == status
+        ]
 
     def get_loans_for_borrower(self: Self, borrower: str):
-        pass
+        return Store.query(
+            query_index=Index(
+                prefix=PREFIX,
+                index={
+                    "borrower": borrower
+                }
+            ),
+            ipfs=self.ipfsclient,
+            reader=Loan()
+        )
 
     def get_loans_for_lender(self: Self, lender: str):
-        pass
+        return Store.query(
+            query_index=Index(
+                prefix=PREFIX,
+                index={
+                    "lender": lender
+                }
+            ),
+            ipfs=self.ipfsclient,
+            reader=Loan()
+        )
 
     def get_payments_for_loan(self: Self, loan_id: str):
-        pass
+        return Store.query(
+            query_index=Index(
+                prefix=PREFIX,
+                index={
+                    "loan": loan_id
+                }
+            ),
+            ipfs=self.ipfsclient,
+            reader=Loan()
+        )

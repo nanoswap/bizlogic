@@ -12,6 +12,8 @@ from ipfsclient.ipfs import Ipfs
 
 from protoc.vouch_pb2 import Vouch
 
+PREFIX = "vouch"
+
 
 class VouchWriter():
     store: Store
@@ -24,7 +26,7 @@ class VouchWriter():
             ipfsclient: Ipfs) -> None:
         """Constructor"""
         index = Index(
-            prefix="application",
+            prefix=PREFIX,
             index={
                 "vouchee": vouchee,
                 "voucher": voucher
@@ -39,3 +41,7 @@ class VouchWriter():
         data = Vouch(amount_asking=amount_asking)
         self.store(index=index, ipfs=ipfsclient, writer=data)
         self.store.write()
+
+class VouchReader():
+    def __init__(self: Self):
+        pass
