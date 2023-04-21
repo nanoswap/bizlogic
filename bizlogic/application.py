@@ -1,11 +1,13 @@
 import time
-from typing import Self
+from typing import List, Self
 
-from ipfskvs.store import Store
-from ipfsclient.ipfs import Ipfs
-from ipfskvs.index import Index
+from ipfskvs.store import Store  # noqa: I201
+from ipfsclient.ipfs import Ipfs  # noqa: I201
+from ipfskvs.index import Index  # noqa: I201
 
 from protoc.loan_application_pb2 import LoanApplication
+
+PREFIX="application"
 
 # ipfs filename:
 #   application/borrower_<id>/created_<timestamp>
@@ -41,7 +43,7 @@ class LoanApplicationWriter():
     
     def _generate_index(self):
         self.index = Index(
-            prefix="application",
+            prefix=PREFIX,
             index={
                 "borrower": self.borrower
             },
@@ -62,5 +64,25 @@ class LoanApplicationWriter():
 
 
 class LoanApplicationReader():
-    def __init__(self: Self) -> None:
-        pass
+    ipfsclient: Ipfs
+
+    def __init__(self: Self, ipfsclient: Ipfs):
+        self.ipfsclient = ipfsclient
+
+    def get_open_loan_applications(self: Self) -> List[LoanApplication]:
+        # get all applications from ipfs
+        applications = Store.query(
+            query_index=Index(
+                prefix=PREFIX,
+                index={}
+            ),
+            ipfs=self.ipfsclient,
+            reader=LoanApplication()
+        )
+
+        # filter for open applications
+        return [
+            application
+            for application in applications
+            if not application.closed
+        ]

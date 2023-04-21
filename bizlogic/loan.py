@@ -157,3 +157,22 @@ class LoanWriter():
         )
         self._generate_index()
         self._write()
+
+
+class LoanReader():
+    ipfsclient: Ipfs
+
+    def __init__(self: Self, ipfsclient: Ipfs):
+        self.ipfsclient = ipfsclient
+    
+    def get_loan_offers(self: Self):
+        pass
+
+    def get_loans_for_borrower(self: Self, borrower: str):
+        pass
+
+    def get_loans_for_lender(self: Self, lender: str):
+        pass
+
+    def get_payments_for_loan(self: Self, loan_id: str):
+        pass
