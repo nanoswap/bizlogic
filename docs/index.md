@@ -79,7 +79,8 @@ Process:
 
 ```py
     from ipfsclient.ipfs import Ipfs
-    from bizlogic.loan import LoanWriter, PaymentSchedule
+    from bizlogic.loan.writer import LoanWriter
+    from bizlogic.loan.repayment import PaymentSchedule
     import datetime
 
     ipfsclient = Ipfs()
@@ -106,7 +107,7 @@ Process:
 
 ```py
     from ipfsclient.ipfs import Ipfs
-    from bizlogic.loan import LoanReader
+    from bizlogic.loan.reader import LoanReader
 
     ipfsclient = Ipfs()
 
@@ -128,6 +129,20 @@ Process:
 6. Adam gets his active loans and makes a payment
 
 ```py
+    from ipfsclient.ipfs import Ipfs
+    from bizlogic.loan.reader import LoanReader
+    from bizlogic.loan.writer import LoanWriter
 
+    ipfsclient = Ipfs()
 
+    # read loans
+    reader = LoanReader()
+    loans = reader.query_for_borrower(<borrower_id>)
+    print(loans)
+
+    # make the XNO payment
+    transaction_id = ...
+
+    # register the payment
+    writer = LoanWriter()
 ```
