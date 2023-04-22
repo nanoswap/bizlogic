@@ -34,10 +34,9 @@ class LoanApplicationWriter():
             closed=False
         )
         self._generate_index()
-        self._write()
 
     
-    def _write(self):
+    def write(self):
 
         store = Store(
             index=self.index,

@@ -10,7 +10,7 @@ pip install bizlogic
 
 # Usage
 
-Here is the overall workflow. **Note**, this isn't how end users will actually interact with the platform. This will need to be deployed to a webserver with a UI for users to access. The private webserver deployment removes fraud opportunities. At time of writing there isn't functionality to create a sharable link to have someone you know vouch you - the names are just to make the workflow easier to understand.
+Here is the overall workflow. **Note**, this isn't how end users will actually interact with the platform. This will need to be deployed to a webserver with a UI for users to access. The private webserver deployment removes fraud opportunities. At time of writing there isn't functionality to create a sharable link to have someone you know "vouch" you - the names are just to make the workflow easier to understand.
 
 Parameters and terminology:
  - **Adam** needs money, he is the "*borrower*"
@@ -21,7 +21,7 @@ Parameters and terminology:
  - **Sarah** is Adam's rich Aunt, who will fund his loan. She is the "*lender*"
 
 Process:
-1. Adam creates a loan application
+1. Adam creates a loan application.
 
 ```py
     from ipfsclient.ipfs import Ipfs
@@ -32,7 +32,7 @@ Process:
 
     # Create a loan application and write the data to IPFS
     writer = LoanApplicationWriter(ipfsclient, <borrower_id>, amount_asking)
-    print(writer.data)
+    writer.write()
 ```
 
 2. Eugene vouches Adam
@@ -44,10 +44,11 @@ Process:
     ipfsclient = Ipfs()
 
     # Create a vouch and write the data to IPFS
-    VouchWriter(ipfsclient, <voucher_id>, <vouchee_id>)
+    writer = VouchWriter(ipfsclient, <voucher_id>, <vouchee_id>)
+    writer.write()
 ```
 
-3. Sarah searches for the loan application and vouches
+3. Sarah searches for the loan application and vouches. Bizlogic does not cover credit checks, that will be a separate package.
 
 ```py
     from ipfsclient.ipfs import Ipfs
@@ -56,14 +57,25 @@ Process:
 
     ipfsclient = Ipfs()
 
+    # search for applications (Adam's request for 1000 raw XNO)
     reader = LoanApplicationReader(ipfsclient)
+    applications = reader.get_open_loan_applications()
+    print(applications)
 
+    # parse borrower from applications
+    ...
+
+    # search for vouchees (Eugene's id will be in the response data)
     reader = VouchReader(ipfsclient)
-    vouches = reader.get_vouchees_for_borrower(<borrower_id>)
+    vouchees = reader.get_vouchees_for_borrower(<borrower_id>)
     print(vouches)
+
+    # search for vouchers (the people Adam vouched for)
+    vouchers = reader.get_vouchers_for_borrower(<borrower_id>)
+    print(vouchers)
 ```
 
-4. Sarah creates a loan offer for Adam
+4. Sarah creates a loan offer for Adam.
 
 ```py
     from ipfsclient.ipfs import Ipfs
@@ -80,21 +92,42 @@ Process:
     )
 
     # Create the loan offer and write it to IPFS
-
-
+    writer = LoanWriter(
+        <borrower_id>,
+        <lender_id>,
+        1000,
+        repayment_schedule,
+        expiry  # the time the borrower has to accept the offer
+    )
+    writer.write()
 ```
 
+5. Adam views his loan offers and accepts the offer.
+
 ```py
+    from ipfsclient.ipfs import Ipfs
     from bizlogic.loan import LoanReader
 
-    # Someone else: Read the loan applications and write an offer
-    reader = LoanApplicationReader(ipfsclient)
+    ipfsclient = Ipfs()
 
-    # check your pending loan offers
+    # List open loan offers
     reader = LoanReader(ipfsclient)
-    pending_offers = reader.get_open_loan_offers(borrower_id)
-    print(pending_offers)
+    offers = reader.get_open_loan_offers(<borrower_id>)
+    print(offers)
 
-    # accept an offer
+    # Parse the loan_data and loan_id from the offers result
+    loan_data = ...
+    loan_id = ...
+
+    # Accept the offer they select
+    writer = LoanWriter.from_data(ipfsclient, loan_data)
+    writer.accept_terms()
+    writer.write()
+```
+
+6. Adam gets his active loans and makes a payment
+
+```py
+
 
 ```

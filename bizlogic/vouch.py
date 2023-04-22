@@ -16,7 +16,10 @@ PREFIX = "vouch"
 
 
 class VouchWriter():
-    store: Store
+    vouchee: str
+    voucher: str
+    ipfsclient: Ipfs
+    data: Vouch
 
     def __init__(
             self: Self,
@@ -24,11 +27,28 @@ class VouchWriter():
             voucher: str,
             vouchee: str) -> None:
         """Constructor"""
-        index = Index(
+        self.vouchee = vouchee
+        self.voucher = voucher
+        self.ipfsclient = ipfsclient
+        self.data = Vouch(voucher=voucher)
+
+    def write(self: Self):
+        self._generate_index()
+
+        store = Store(
+            index=self.index,
+            ipfs=self.ipfsclient,
+            writer=self.data
+        )
+
+        store.add()
+    
+    def _generate_index(self: Self):
+        self.index = Index(
             prefix=PREFIX,
             index={
-                "vouchee": vouchee,
-                "voucher": voucher
+                "vouchee": self.vouchee,
+                "voucher": self.voucher
             },
             subindex=Index(
                 index={
@@ -36,11 +56,6 @@ class VouchWriter():
                 }
             )
         )
-
-        data = Vouch(voucher=voucher)
-        self.store(index=index, ipfs=ipfsclient, writer=data)
-        self.store.add()
-
 
 class VouchReader():
     ipfsclient: Ipfs

@@ -101,7 +101,6 @@ class LoanWriter():
         self.loan_id = str(uuid.uuid4())
         self.borrower = borrower
         self.lender = lender
-        self._generate_index()
         self.ipfsclient = ipfs
         self.data = Loan(
             principal_amount=principal_amount,
@@ -110,8 +109,19 @@ class LoanWriter():
             accepted=False
         )
 
-    
-    def _write(self):
+    @staticmethod
+    def from_data(ipfs: Ipfs, data: Store):
+        return LoanWriter(
+            ipfs=ipfs,
+            borrower=data.index["borrower"],
+            lender=data.index["lender"],
+            principal_amount=data.reader.principal_amount,
+            repayment_schedule=data.reader.repayment_schedule,
+            offer_expiry=data.reader.offer_expiry
+        )
+
+    def write(self):
+        self._generate_index()
 
         store = Store(
             index=self.index,
@@ -145,8 +155,6 @@ class LoanWriter():
             offer_expiry=self.data.offer_expiry,
             accepted=True
         )
-        self._generate_index()
-        self._write()
 
     def register_payment(self: Self, payment_id: str, transaction: str):
         new_repayment_schedule = []
@@ -167,8 +175,6 @@ class LoanWriter():
             offer_expiry=self.data.offer_expiry,
             accepted=self.data.accepted
         )
-        self._generate_index()
-        self._write()
 
 
 class LoanReader():
