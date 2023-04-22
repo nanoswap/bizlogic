@@ -10,6 +10,13 @@
       show_root_heading: true
       show_source: true
 
+::: bizlogic.loan.PaymentSchedule
+    handler: python
+    options:
+      members:
+        - create_payment_schedule
+      show_root_heading: true
+      show_source: true
 
 ::: bizlogic.loan.LoanWriter
     handler: python
@@ -18,7 +25,6 @@
         - __init__
         - _write
         - _generate_index
-        - create_payment_schedule
         - accept_terms
         - register_payment
       show_root_heading: true

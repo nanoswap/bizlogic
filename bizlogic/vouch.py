@@ -20,10 +20,9 @@ class VouchWriter():
 
     def __init__(
             self: Self,
+            ipfsclient: Ipfs,
             voucher: str,
-            vouchee: str,
-            amount_asking: int,
-            ipfsclient: Ipfs) -> None:
+            vouchee: str) -> None:
         """Constructor"""
         index = Index(
             prefix=PREFIX,
@@ -38,9 +37,10 @@ class VouchWriter():
             )
         )
 
-        data = Vouch(amount_asking=amount_asking)
+        data = Vouch(voucher=voucher)
         self.store(index=index, ipfs=ipfsclient, writer=data)
         self.store.add()
+
 
 class VouchReader():
     ipfsclient: Ipfs
