@@ -1,6 +1,6 @@
 # Loan Repayment
 
-::: bizlogic.loan.PaymentSchedule
+::: bizlogic.loan.repayment.PaymentSchedule
     handler: python
     options:
       members:

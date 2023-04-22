@@ -1,4 +1,4 @@
-# Loan Application
+# LoanApplication
 
 ::: bizlogic.application.LoanApplicationWriter
     handler: python

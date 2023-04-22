@@ -1,6 +1,6 @@
 # LoanReader
 
-::: bizlogic.loan.LoanReader
+::: bizlogic.loan.reader.LoanReader
     handler: python
     options:
       members:

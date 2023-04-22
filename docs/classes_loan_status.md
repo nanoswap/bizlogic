@@ -1,6 +1,6 @@
 # LoanStatus
 
-::: bizlogic.loan.LoanStatus
+::: bizlogic.loan.status.LoanStatus
     handler: python
     options:
       members:

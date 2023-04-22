@@ -1,6 +1,6 @@
 # LoanWriter
 
-::: bizlogic.loan.LoanWriter
+::: bizlogic.loan.writer.LoanWriter
     handler: python
     options:
       members:
