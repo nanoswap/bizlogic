@@ -12,15 +12,16 @@ pip install bizlogic
 
 Here is the overall workflow. **Note**, this isn't how end users will actually interact with the platform. This will need to be deployed to a webserver with a UI for users to access. The private webserver deployment removes fraud opportunities. At time of writing there isn't functionality to create a sharable link to have someone you know "vouch" you - the names are just to make the workflow easier to understand.
 
-Parameters and terminology:
- - **Adam** needs money, he is the "*borrower*"
- - **Eugene** is Adam's dad, and will cosign his application.
-   - A "*vouch*" is a way to publicly approve of someone else's credit activity.
-   - **Eugene** is the "*voucher*"
-   - **Adam** is the "*vouchee*"
- - **Sarah** is Adam's rich Aunt, who will fund his loan. She is the "*lender*"
+Parameters and terminology:  
+ - **Adam** needs money, he is the "*borrower*"  
+ - **Eugene** is Adam's dad, and will cosign his application.  
+   - A "*vouch*" is a way to publicly approve of someone else's credit activity.  
+   - **Eugene** is the "*voucher*"  
+   - **Adam** is the "*vouchee*"  
+ - **Sarah** is Adam's rich Aunt, who will fund his loan. She is the "*lender*"  
 
-Process:
+Process:  
+
 1. Adam creates a loan application.
 
 ```py
