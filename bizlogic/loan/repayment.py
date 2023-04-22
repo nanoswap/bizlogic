@@ -5,6 +5,7 @@ import uuid
 
 from protoc.loan import LoanPayment
 
+
 class PaymentSchedule():
 
     @staticmethod
