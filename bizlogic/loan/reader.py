@@ -20,7 +20,8 @@ class LoanReader():
                 prefix=PREFIX,
                 index={
                     "borrower": borrower
-                }
+                },
+                size=3
             ),
         )
 
@@ -48,7 +49,8 @@ class LoanReader():
                 prefix=PREFIX,
                 index={
                     "borrower": borrower
-                }
+                },
+                size=3
             ),
             ipfs=self.ipfsclient,
             reader=Loan()
@@ -60,7 +62,8 @@ class LoanReader():
                 prefix=PREFIX,
                 index={
                     "lender": lender
-                }
+                },
+                size=3
             ),
             ipfs=self.ipfsclient,
             reader=Loan()
@@ -72,7 +75,8 @@ class LoanReader():
                 prefix=PREFIX,
                 index={
                     "loan": loan_id
-                }
+                },
+                size=3
             ),
             ipfs=self.ipfsclient,
             reader=Loan()

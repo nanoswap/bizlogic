@@ -69,7 +69,8 @@ class VouchReader():
                 prefix=PREFIX,
                 index={
                     "voucher": borrower
-                }
+                },
+                size=2
             ),
             ipfs=self.ipfsclient,
             reader=Vouch()
@@ -81,7 +82,8 @@ class VouchReader():
                 prefix=PREFIX,
                 index={
                     "vouchee": borrower
-                }
+                },
+                size=2
             ),
             ipfs=self.ipfsclient,
             reader=Vouch()

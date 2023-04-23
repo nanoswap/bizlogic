@@ -102,7 +102,8 @@ class LoanApplicationReader():
                 prefix=PREFIX,
                 index={
                     "borrower": borrower
-                }
+                },
+                size=2
             ),
             ipfs=self.ipfsclient,
             reader=LoanApplication()
@@ -114,7 +115,8 @@ class LoanApplicationReader():
                 prefix=PREFIX,
                 index={
                     "application": application_id
-                }
+                },
+                size=2
             ),
             ipfs=self.ipfsclient,
             reader=LoanApplication()
