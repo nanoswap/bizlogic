@@ -1,4 +1,4 @@
-from ipfsclient import Ipfs
+from ipfsclient.ipfs import Ipfs
 from typing import Self
 from bizlogic.loan import PREFIX
 from bizlogic.loan.status import LoanStatus, LoanStatusType
