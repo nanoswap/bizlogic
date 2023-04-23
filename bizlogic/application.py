@@ -26,7 +26,7 @@ class LoanApplicationWriter():
     ipfsclient: Ipfs
     data: LoanApplication
 
-    def __init__(self: Self, ipfsclient: Ipfs, borrower: str, amount_asking: int):
+    def __init__(self: Self, ipfsclient: Ipfs, borrower: str, amount_asking: int, closed: bool = False):
         """Constructor"""
         self.application_id = str(uuid.uuid4())
         self.borrower = borrower
@@ -34,10 +34,9 @@ class LoanApplicationWriter():
         self.amount_asking = amount_asking
         self.data = LoanApplication(
             amount_asking=self.amount_asking,
-            closed=False
+            closed=closed
         )
         self._generate_index()
-
     
     def write(self):
 
