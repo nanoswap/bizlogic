@@ -5,7 +5,7 @@
     options:
       members:
         - __init__
-        - _write
+        - write
         - _generate_index
         - accept_terms
         - register_payment

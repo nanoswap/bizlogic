@@ -69,7 +69,6 @@ class LoanApplicationWriter():
             closed=True
         )
         self._generate_index()
-        self._write()
 
 
 class LoanApplicationReader():

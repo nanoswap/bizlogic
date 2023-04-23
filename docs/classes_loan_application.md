@@ -5,7 +5,7 @@
     options:
       members:
         - __init__
-        - _write
+        - write
         - _generate_index
         - withdraw_loan_application
       show_root_heading: true
