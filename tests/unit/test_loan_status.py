@@ -3,7 +3,7 @@ import random
 from typing import Self
 import unittest
 
-from bizlogic.loan import LoanStatus, LoanStatusType
+from bizlogic.loan.status import LoanStatus, LoanStatusType
 
 from bizlogic.protoc.loan_pb2 import Loan
 

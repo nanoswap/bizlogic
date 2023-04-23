@@ -2,7 +2,8 @@ from ipfsclient.ipfs import Ipfs
 from typing import Self
 from bizlogic.loan import PREFIX
 from bizlogic.loan.status import LoanStatus, LoanStatusType
-from ipfskvs import Index, Store
+from ipfskvs.index import Index
+from ipfskvs.store import Store
 
 from bizlogic.protoc.loan_pb2 import Loan
 

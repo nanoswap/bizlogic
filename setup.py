@@ -28,5 +28,8 @@ setup(
     ],
     python_requires=">=3.11",
     package_dir={'bizlogic': "bizlogic"},
+    package_data={
+        "bizlogic.protoc": ["*.proto"],
+    },
     packages=find_packages(exclude=['tests', 'tests.*']),
 )

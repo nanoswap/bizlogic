@@ -3,7 +3,7 @@ from google.protobuf.timestamp_pb2 import Timestamp
 from enum import Enum
 from datetime import datetime, timedelta
 
-from bizlogic.protoc.loan import Loan
+from bizlogic.protoc.loan_pb2 import Loan
 
 
 class LoanStatusType(Enum):
