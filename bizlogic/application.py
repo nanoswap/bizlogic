@@ -1,5 +1,6 @@
 import time
 from typing import List, Self
+import uuid
 
 from ipfskvs.store import Store  # noqa: I201
 from ipfskvs.index import Index  # noqa: I201
@@ -10,7 +11,7 @@ from bizlogic.protoc.loan_application_pb2 import LoanApplication
 PREFIX = "application"
 
 # ipfs filename:
-#   application/borrower_<id>/created_<timestamp>
+#   application/borrower_<id>/application_<id>/created_<timestamp>
 
 class LoanApplicationWriter():
     """Loan Application Writer
@@ -19,6 +20,7 @@ class LoanApplicationWriter():
     and send you loan offers. When the user accepts a loan offer, they can close their
     loan application to tell others they are no longer interested in additional borrowing.
     """
+    application_id: str
     borrower: str
     amount_asking: int
     ipfsclient: Ipfs
@@ -26,6 +28,7 @@ class LoanApplicationWriter():
 
     def __init__(self: Self, ipfsclient: Ipfs, borrower: str, amount_asking: int):
         """Constructor"""
+        self.application_id = str(uuid.uuid4())
         self.borrower = borrower
         self.ipfsclient = ipfsclient
         self.amount_asking = amount_asking
@@ -50,7 +53,8 @@ class LoanApplicationWriter():
         self.index = Index(
             prefix=PREFIX,
             index={
-                "borrower": self.borrower
+                "borrower": self.borrower,
+                "application": self.application_id
             },
             subindex=Index(
                 index={
@@ -91,3 +95,27 @@ class LoanApplicationReader():
             for application in applications
             if not application.reader.closed
         ]
+    
+    def get_loan_applications_for_borrower(self: Self, borrower: str) -> List[LoanApplication]:
+        return Store.query(
+            query_index=Index(
+                prefix=PREFIX,
+                index={
+                    "borrower": borrower
+                }
+            ),
+            ipfs=self.ipfsclient,
+            reader=LoanApplication()
+        )
+
+    def get_loan_application(self: Self, application_id: str) -> LoanApplication:
+        return Store.query(
+            query_index=Index(
+                prefix=PREFIX,
+                index={
+                    "application": application_id
+                }
+            ),
+            ipfs=self.ipfsclient,
+            reader=LoanApplication()
+        )
