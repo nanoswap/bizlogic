@@ -38,7 +38,7 @@ To run all checks: `nox`
 
 #### Regenerate pb2.py files 
 ```
-protoc --python_out=protoc --proto_path=protobuf protobuf/*.proto
+protoc --python_out=bizlogic/protoc --proto_path=protobuf protobuf/*.proto
 ```
 
 #### Ipfs setup

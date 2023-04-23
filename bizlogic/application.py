@@ -5,7 +5,7 @@ from ipfskvs.store import Store  # noqa: I201
 from ipfskvs.index import Index  # noqa: I201
 from ipfsclient.ipfs import Ipfs  # noqa: I201
 
-from protoc.loan_application_pb2 import LoanApplication
+from bizlogic.protoc.loan_application_pb2 import LoanApplication
 
 PREFIX = "application"
 

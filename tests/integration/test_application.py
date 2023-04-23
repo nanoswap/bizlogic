@@ -1,7 +1,7 @@
 import unittest
 from ipfskvs.store import Store
 from ipfsclient.ipfs import Ipfs
-from protoc.loan_application_pb2 import LoanApplication
+from bizlogic.protoc.loan_application_pb2 import LoanApplication
 from ipfskvs.index import Index
 from bizlogic.application import LoanApplicationWriter, LoanApplicationReader
 import time

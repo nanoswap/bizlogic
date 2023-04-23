@@ -4,7 +4,7 @@ from bizlogic.loan import PREFIX
 from bizlogic.loan.status import LoanStatus, LoanStatusType
 from ipfskvs import Index, Store
 
-from protoc.loan_pb2 import Loan
+from bizlogic.protoc.loan_pb2 import Loan
 
 class LoanReader():
     ipfsclient: Ipfs

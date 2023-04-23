@@ -5,7 +5,7 @@ import unittest
 
 from bizlogic.loan import LoanStatus, LoanStatusType
 
-from protoc.loan_pb2 import Loan
+from bizlogic.protoc.loan_pb2 import Loan
 
 from google.protobuf.timestamp_pb2 import Timestamp
 

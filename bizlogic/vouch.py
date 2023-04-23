@@ -10,7 +10,7 @@ from ipfskvs.index import Index
 from ipfskvs.store import Store
 from ipfsclient.ipfs import Ipfs
 
-from protoc.vouch_pb2 import Vouch
+from bizlogic.protoc.vouch_pb2 import Vouch
 
 PREFIX = "vouch"
 

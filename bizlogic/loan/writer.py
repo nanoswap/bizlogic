@@ -8,7 +8,7 @@ from ipfskvs.store import Store
 from ipfsclient.ipfs import Ipfs
 from ipfskvs.index import Index
 
-from protoc.loan_pb2 import Loan, LoanPayment
+from bizlogic.protoc.loan_pb2 import Loan, LoanPayment
 from bizlogic.loan import PREFIX
 
 

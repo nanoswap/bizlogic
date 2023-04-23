@@ -3,7 +3,7 @@ from typing import List
 from google.protobuf.timestamp_pb2 import Timestamp
 import uuid
 
-from protoc.loan import LoanPayment
+from bizlogic.protoc.loan import LoanPayment
 
 
 class PaymentSchedule():
