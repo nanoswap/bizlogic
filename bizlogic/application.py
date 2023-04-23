@@ -32,14 +32,15 @@ class LoanApplicationWriter():
         self.borrower = borrower
         self.ipfsclient = ipfsclient
         self.amount_asking = amount_asking
+        self.closed = closed
         self.data = LoanApplication(
             amount_asking=self.amount_asking,
-            closed=closed
+            closed=self.closed
         )
-        self._generate_index()
     
     def write(self):
 
+        self._generate_index()
         store = Store(
             index=self.index,
             ipfs=self.ipfsclient,
