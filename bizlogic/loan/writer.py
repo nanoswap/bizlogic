@@ -4,6 +4,8 @@ import time
 import uuid
 from typing import List, Self
 
+from google.protobuf.timestamp_pb2 import Timestamp
+
 from ipfskvs.store import Store
 from ipfsclient.ipfs import Ipfs
 from ipfskvs.index import Index
@@ -38,10 +40,12 @@ class LoanWriter():
         self.borrower = borrower
         self.lender = lender
         self.ipfsclient = ipfs
+        timestamp = Timestamp()
+        timestamp.FromDatetime(offer_expiry)
         self.data = Loan(
             principal_amount=principal_amount,
             repayment_schedule=repayment_schedule,
-            offer_expiry=offer_expiry,
+            offer_expiry=timestamp,
             accepted=False
         )
 
