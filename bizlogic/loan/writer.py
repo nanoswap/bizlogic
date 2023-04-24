@@ -80,11 +80,9 @@ class LoanWriter():
                 "loan": self.loan_id
             },
             subindex=Index(
-                subindex=Index(
-                    index={
-                        "created": str(time.time_ns())
-                    }
-                )
+                index={
+                    "created": str(time.time_ns())
+                }
             )
         )
 
