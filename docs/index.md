@@ -97,7 +97,8 @@ Process:
         amount=1000,  # in raw XNO
         interest_rate=1.05,  # 5%
         total_duration=datetime.timedelta(days=100),
-        number_of_payments=10
+        number_of_payments=10,
+        first_payment=datetime.now()
     )
 
     # Create the loan offer and write it to IPFS

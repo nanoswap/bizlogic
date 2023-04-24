@@ -14,7 +14,8 @@ class PaymentSchedule():
             amount: int,
             interest_rate: float,
             total_duration: datetime.timedelta,
-            number_of_payments: int) -> List[LoanPayment]:
+            number_of_payments: int,
+            first_payment: datetime.date) -> List[LoanPayment]:
         """
         Generate a list of loan payment objects based on some initial loan parameters
 
@@ -29,7 +30,6 @@ class PaymentSchedule():
         # calculate the payment terms
         total_amount_due = amount * interest_rate
         amount_due_each_payment = int(total_amount_due / number_of_payments)
-        first_payment = datetime.datetime.now()
 
         result = []
         for payment_interval in range(number_of_payments):
