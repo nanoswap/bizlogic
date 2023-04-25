@@ -63,6 +63,16 @@ class VouchReader():
     def __init__(self: Self, ipfsclient: Ipfs):
         self.ipfsclient = ipfsclient
 
+    def get_all_vouches(self: Self):
+        return Store.query(
+            query_index=Index(
+                prefix=PREFIX,
+                index={}
+            ),
+            ipfs=self.ipfsclient,
+            reader=Vouch()
+        )
+
     def get_vouchers_for_borrower(self: Self, borrower: str):
         return Store.query(
             query_index=Index(

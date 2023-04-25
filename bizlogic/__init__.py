@@ -11,4 +11,4 @@ from bizlogic.loan import status
 from bizlogic.loan import writer
 
 # imported into setup.py
-__version__ = "0.0.14"
+__version__ = "0.0.15"
