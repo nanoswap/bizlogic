@@ -20,9 +20,9 @@ def build(session: nox.Session) -> None:
     session.install("poetry")
     session.run("poetry", "build")
 
-    # publish pip package
-    session.install("twine")
-    session.run("twine", "upload", "dist/*")
+    # # publish pip package
+    # session.install("twine")
+    # session.run("twine", "upload", "dist/*")
 
 
 @nox.session(python=["python3.11"])
