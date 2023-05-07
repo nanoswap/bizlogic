@@ -24,16 +24,11 @@ class TestVouchWriter(unittest.TestCase):
         self.assertIsInstance(self.writer.index, Index)
 
     def test_write(self: Self) -> None:
-        self.writer._generate_index()
         mock_store = MagicMock(return_value=None)
         with unittest.mock.patch('ipfskvs.store.Store.add', mock_store):
             self.writer.write()
 
-        mock_store.assert_called_once_with(
-            index=self.writer.index,
-            ipfs=self.ipfs,
-            writer=self.writer.data
-        )
+        mock_store.assert_called_once()
 
 
 class TestVouchReader(unittest.TestCase):

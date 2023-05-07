@@ -49,6 +49,16 @@ class LoanApplicationWriter():
 
         store.add()
     
+    def delete(self):
+        # don't need to generate index, just delete the store
+        store = Store(
+            index=self.index,
+            ipfs=self.ipfsclient,
+            writer=self.data
+        )
+
+        store.delete()
+    
     def _generate_index(self):
         self.index = Index(
             prefix=PREFIX,
@@ -69,6 +79,7 @@ class LoanApplicationWriter():
             closed=True
         )
         self._generate_index()
+        self.write()
 
 
 class LoanApplicationReader():
