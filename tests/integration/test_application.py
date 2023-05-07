@@ -13,12 +13,16 @@ class TestApplication(unittest.TestCase):
         # create an application
         mock_store = MagicMock(return_value=None)
         writer = LoanApplicationWriter(self.ipfsclient, "John", 1000)
-        with unittest.mock.patch('ipfskvs.store.Store', mock_store):
+        with unittest.mock.patch('ipfskvs.store.Store.add', mock_store):
             writer.write()
         
         # query it, check that it's there
         reader = LoanApplicationReader(self.ipfsclient)
-        applications = reader.get_open_loan_applications()
+        # mock the reader to read the application
+        mock_store = MagicMock(return_value=[writer.data])
+        with unittest.mock.patch('ipfskvs.store.Store.query', mock_store):
+            applications = reader.get_open_loan_applications()
+
         self.assertEqual(len(applications), 1)
         self.assertEqual(applications[0].amount_asking, 1000)
         self.assertFalse(applications[0].closed)
@@ -32,7 +36,11 @@ class TestApplication(unittest.TestCase):
         
         # query it, check that it's there
         reader = LoanApplicationReader(self.ipfsclient)
-        applications = reader.get_open_loan_applications()
+        # mock the reader to read the application
+        mock_store = MagicMock(return_value=[writer.data])
+        with unittest.mock.patch('ipfskvs.store.Store.query', mock_store):
+            applications = reader.get_open_loan_applications()
+
         self.assertEqual(len(applications), 1)
         self.assertEqual(applications[0].amount_asking, 1000)
         self.assertFalse(applications[0].closed)
@@ -63,7 +71,10 @@ class TestApplication(unittest.TestCase):
 
         # confirm that there are 7 open applications
         reader = LoanApplicationReader(self.ipfsclient)
-        applications = reader.get_open_loan_applications()
+        mock_store = MagicMock(return_value=[writer.data])
+        with unittest.mock.patch('ipfskvs.store.Store.query', mock_store):
+            applications = reader.get_open_loan_applications()
+
         self.assertEqual(len(applications), 7)
         amounts = [app.amount_asking for app in applications]
         self.assertEqual(set(amounts), set(range(1003, 1011)))
