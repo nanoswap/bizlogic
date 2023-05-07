@@ -1,5 +1,5 @@
 import time
-from typing import Self
+from typing import Iterator, Self, List
 # "voucher": person giving the vouch
 # "vouchee": person receiving the vouch
 
@@ -32,7 +32,7 @@ class VouchWriter():
         self.ipfsclient = ipfsclient
         self.data = Vouch(voucher=voucher)
 
-    def write(self: Self):
+    def write(self: Self) -> None:
         self._generate_index()
 
         store = Store(
@@ -43,7 +43,7 @@ class VouchWriter():
 
         store.add()
     
-    def _generate_index(self: Self):
+    def _generate_index(self: Self) -> None:
         self.index = Index(
             prefix=PREFIX,
             index={
@@ -60,10 +60,10 @@ class VouchWriter():
 class VouchReader():
     ipfsclient: Ipfs
 
-    def __init__(self: Self, ipfsclient: Ipfs):
+    def __init__(self: Self, ipfsclient: Ipfs) -> None:
         self.ipfsclient = ipfsclient
 
-    def get_all_vouches(self: Self):
+    def get_all_vouches(self: Self) -> List:
         return Store.query(
             query_index=Index(
                 prefix=PREFIX,
@@ -73,7 +73,10 @@ class VouchReader():
             reader=Vouch()
         )
 
-    def get_vouchers_for_borrower(self: Self, borrower: str):
+    def get_vouchers_for_borrower(
+        self: Self,
+        borrower: str
+    ) -> Iterator[Store]:
         return Store.query(
             query_index=Index(
                 prefix=PREFIX,
@@ -86,7 +89,10 @@ class VouchReader():
             reader=Vouch()
         )
 
-    def get_vouchees_for_borrower(self: Self, borrower: str):
+    def get_vouchees_for_borrower(
+        self: Self,
+        borrower: str
+    ) -> Iterator[Store]:
         return Store.query(
             query_index=Index(
                 prefix=PREFIX,
