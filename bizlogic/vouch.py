@@ -63,7 +63,7 @@ class VouchReader():
     def __init__(self: Self, ipfsclient: Ipfs) -> None:
         self.ipfsclient = ipfsclient
 
-    def get_all_vouches(self: Self) -> List:
+    def get_all_vouches(self: Self) -> Iterator[Store]:
         return Store.query(
             query_index=Index(
                 prefix=PREFIX,

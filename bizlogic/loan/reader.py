@@ -1,5 +1,5 @@
 from ipfsclient.ipfs import Ipfs
-from typing import Self
+from typing import Iterator, Self
 from bizlogic.loan import PREFIX
 from bizlogic.loan.status import LoanStatus, LoanStatusType
 from ipfskvs.index import Index
@@ -10,10 +10,10 @@ from bizlogic.protoc.loan_pb2 import Loan
 class LoanReader():
     ipfsclient: Ipfs
 
-    def __init__(self: Self, ipfsclient: Ipfs):
+    def __init__(self: Self, ipfsclient: Ipfs) -> None:
         self.ipfsclient = ipfsclient
  
-    def get_open_loan_offers(self: Self, borrower: str):
+    def get_open_loan_offers(self: Self, borrower: str) -> Iterator[Store]:
         return self.query_for_status(
             status=LoanStatus.PENDING_ACCEPTANCE,
             index=Index(
@@ -25,7 +25,7 @@ class LoanReader():
             ),
         )
 
-    def query_for_status(self: Self, status: LoanStatusType, index: dict = {}):
+    def query_for_status(self: Self, status: LoanStatusType, index: dict = {}) -> Iterator[Store]:
         # get all applications from ipfs
         loans = Store.query(
             query_index=Index(
@@ -43,7 +43,7 @@ class LoanReader():
             if LoanStatus.loan_status(loan.reader) == status
         ]
 
-    def query_for_borrower(self: Self, borrower: str):
+    def query_for_borrower(self: Self, borrower: str) -> Iterator[Store]:
         return Store.query(
             query_index=Index(
                 prefix=PREFIX,
@@ -56,7 +56,7 @@ class LoanReader():
             reader=Loan()
         )
 
-    def query_for_lender(self: Self, lender: str):
+    def query_for_lender(self: Self, lender: str) -> Iterator[Store]:
         return Store.query(
             query_index=Index(
                 prefix=PREFIX,
@@ -69,7 +69,7 @@ class LoanReader():
             reader=Loan()
         )
 
-    def query_for_loan(self: Self, loan_id: str):
+    def query_for_loan(self: Self, loan_id: str) -> Iterator[Store]:
         return Store.query(
             query_index=Index(
                 prefix=PREFIX,

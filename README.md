@@ -31,7 +31,7 @@ https://bizlogic.readthedocs.io/
 `mkdocs serve`
 
 ## Tests
-To only run tests: `pytest`  
+To only run tests: `pytest --cov=bizlogic --log-cli-level=debug`  
 To run all checks: `nox`
 
 ### Before running tests:

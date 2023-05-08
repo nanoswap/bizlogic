@@ -1,5 +1,5 @@
 import time
-from typing import List, Self
+from typing import Iterator, List, Self
 import uuid
 
 from ipfskvs.store import Store  # noqa: I201
@@ -7,6 +7,7 @@ from ipfskvs.index import Index  # noqa: I201
 from ipfsclient.ipfs import Ipfs  # noqa: I201
 
 from bizlogic.protoc.loan_application_pb2 import LoanApplication
+from bizlogic.utils import TestingOnly
 
 PREFIX = "application"
 
@@ -49,6 +50,7 @@ class LoanApplicationWriter():
 
         store.add()
     
+    @TestingOnly.decorator
     def delete(self):
         # don't need to generate index, just delete the store
         store = Store(
@@ -74,11 +76,11 @@ class LoanApplicationWriter():
         )
 
     def withdraw_loan_application(self: Self):
+        # create a new LoanApplication object with closed=True
         self.data = LoanApplication(
             amount_asking=self.amount_asking,
             closed=True
         )
-        self._generate_index()
         self.write()
 
 
@@ -88,7 +90,7 @@ class LoanApplicationReader():
     def __init__(self: Self, ipfsclient: Ipfs):
         self.ipfsclient = ipfsclient
 
-    def get_open_loan_applications(self: Self) -> List[LoanApplication]:
+    def get_open_loan_applications(self: Self) -> Iterator[Store]:
         # get all applications from ipfs
         applications = Store.query(
             query_index=Index(
@@ -106,7 +108,7 @@ class LoanApplicationReader():
             if not application.reader.closed
         ]
     
-    def get_loan_applications_for_borrower(self: Self, borrower: str) -> List[LoanApplication]:
+    def get_loan_applications_for_borrower(self: Self, borrower: str) -> Iterator[Store]:
         return Store.query(
             query_index=Index(
                 prefix=PREFIX,
@@ -119,7 +121,7 @@ class LoanApplicationReader():
             reader=LoanApplication()
         )
 
-    def get_loan_application(self: Self, application_id: str) -> LoanApplication:
+    def get_loan_application(self: Self, application_id: str) -> Iterator[Store]:
         return Store.query(
             query_index=Index(
                 prefix=PREFIX,
