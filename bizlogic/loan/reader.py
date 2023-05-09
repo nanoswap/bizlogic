@@ -7,13 +7,16 @@ from ipfskvs.store import Store
 
 from bizlogic.protoc.loan_pb2 import Loan
 
+
 class LoanReader():
     ipfsclient: Ipfs
 
     def __init__(self: Self, ipfsclient: Ipfs) -> None:
+        """Constructor."""
         self.ipfsclient = ipfsclient
  
     def get_open_loan_offers(self: Self, borrower: str) -> Iterator[Store]:
+        """Get all open loan offers for a borrower."""
         return self.query_for_status(
             status=LoanStatus.PENDING_ACCEPTANCE,
             index=Index(
@@ -26,6 +29,7 @@ class LoanReader():
         )
 
     def query_for_status(self: Self, status: LoanStatusType, index: dict = {}) -> Iterator[Store]:
+        """Query for loans with a specific status."""
         # get all applications from ipfs
         loans = Store.query(
             query_index=Index(
@@ -44,6 +48,7 @@ class LoanReader():
         ]
 
     def query_for_borrower(self: Self, borrower: str) -> Iterator[Store]:
+        """Query for loans with a specific borrower."""
         return Store.query(
             query_index=Index(
                 prefix=PREFIX,
@@ -57,6 +62,7 @@ class LoanReader():
         )
 
     def query_for_lender(self: Self, lender: str) -> Iterator[Store]:
+        """Query for loans with a specific lender."""
         return Store.query(
             query_index=Index(
                 prefix=PREFIX,
@@ -70,6 +76,7 @@ class LoanReader():
         )
 
     def query_for_loan(self: Self, loan_id: str) -> Iterator[Store]:
+        """Query for a specific loan."""
         return Store.query(
             query_index=Index(
                 prefix=PREFIX,

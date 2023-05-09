@@ -5,5 +5,5 @@ package nanoswap.message;
 //   application/borrower_<id>/created_<timestamp>
 message LoanApplication {
     int64 amount_asking = 1;
-    bool closed = 3;
+    bool closed = 2;
 }

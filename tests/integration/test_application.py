@@ -71,26 +71,52 @@ class TestApplication(unittest.TestCase):
         writer1.delete()
         writer.delete()
 
-    # def test_filter(self):
-    #     # create 10 applications
-    #     writers = []
-    #     for i in range(10):
-    #         writer = LoanApplicationWriter(self.ipfsclient, "John", 1000 + i)
-    #         writer.write()
-    #         writers.append(writer)
+    def test_filter(self):
+        # create 10 applications
+        writers = []
+        for i in range(10):
+            writer = LoanApplicationWriter(self.ipfsclient, "John", 1000 + i)
+            writer.write()
+            writers.append(writer)
 
-    #     # withdraw 3 of them
-    #     for writer in writers[:3]:
-    #         writer.withdraw_loan_application()
+        # withdraw 3 of them
+        for writer in writers[:3]:
+            writer2 = copy.deepcopy(writer)  # save to delete later
+            writer2.withdraw_loan_application()
+            writers.append(writer2)
 
-    #     # confirm that there are 7 open applications
-    #     reader = LoanApplicationReader(self.ipfsclient)
-    #     applications = reader.get_open_loan_applications()
+        # confirm that there are 7 open applications
+        reader = LoanApplicationReader(self.ipfsclient)
+        applications = reader.get_open_loan_applications()
 
-    #     self.assertEqual(len(applications), 7)
-    #     amounts = [app.amount_asking for app in applications]
-    #     self.assertEqual(set(amounts), set(range(1003, 1011)))
+        print(applications)
+        # the output doesn't have the closed field, or all of them are false
+        #         [Store(index=<ipfskvs.index.Index object at 0x11d1ef310>, writer=None, reader=amount_asking: 1001
+        # ), Store(index=<ipfskvs.index.Index object at 0x11d1eeb90>, writer=None, reader=amount_asking: 1006
+        # ), Store(index=<ipfskvs.index.Index object at 0x11d206d90>, writer=None, reader=amount_asking: 1003
+        # ), Store(index=<ipfskvs.index.Index object at 0x11d207950>, writer=None, reader=amount_asking: 1006
+        # ), Store(index=<ipfskvs.index.Index object at 0x11d1ec2d0>, writer=None, reader=amount_asking: 1001
+        # ), Store(index=<ipfskvs.index.Index object at 0x11d207fd0>, writer=None, reader=amount_asking: 1004
+        # ), Store(index=<ipfskvs.index.Index object at 0x11d2053d0>, writer=None, reader=amount_asking: 1009
+        # ), Store(index=<ipfskvs.index.Index object at 0x11d206850>, writer=None, reader=amount_asking: 1000
+        # ), Store(index=<ipfskvs.index.Index object at 0x11d1efd90>, writer=None, reader=amount_asking: 1008
+        # ), Store(index=<ipfskvs.index.Index object at 0x11d206610>, writer=None, reader=amount_asking: 1007
+        # ), Store(index=<ipfskvs.index.Index object at 0x11d206010>, writer=None, reader=amount_asking: 1009
+        # ), Store(index=<ipfskvs.index.Index object at 0x11d215610>, writer=None, reader=amount_asking: 1005
+        # ), Store(index=<ipfskvs.index.Index object at 0x11d217810>, writer=None, reader=amount_asking: 1004
+        # ), Store(index=<ipfskvs.index.Index object at 0x11d205cd0>, writer=None, reader=amount_asking: 1005
+        # ), Store(index=<ipfskvs.index.Index object at 0x11d206090>, writer=None, reader=amount_asking: 1003
+        # ), Store(index=<ipfskvs.index.Index object at 0x11d217f50>, writer=None, reader=amount_asking: 1000
+        # ), Store(index=<ipfskvs.index.Index object at 0x11d216d10>, writer=None, reader=amount_asking: 1008
+        # ), Store(index=<ipfskvs.index.Index object at 0x11d217e50>, writer=None, reader=amount_asking: 1002
+        # ), Store(index=<ipfskvs.index.Index object at 0x11d1cbed0>, writer=None, reader=amount_asking: 1007
+        # ), Store(index=<ipfskvs.index.Index object at 0x11d2150d0>, writer=None, reader=amount_asking: 1002
+        # )]
 
-    #     # delete them
-    #     for writer in writers:
-    #         writer.delete()
+        self.assertEqual(len(applications), 7)
+        amounts = [app.amount_asking for app in applications]
+        self.assertEqual(set(amounts), set(range(1003, 1011)))
+
+        # delete them
+        for writer in writers:
+            writer.delete()

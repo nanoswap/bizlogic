@@ -18,8 +18,9 @@ from bizlogic.loan import PREFIX
 #   loan/borrower_<id>.lender_<id>.loan_<id>/created_<timestamp>
 
 
-
 class LoanWriter():
+    """Loan Writer."""
+
     loan_id: str
     borrower: str
     lender: str
@@ -35,7 +36,17 @@ class LoanWriter():
             principal_amount: int,
             repayment_schedule: List[LoanPayment],
             offer_expiry: datetime.date) -> None:
-        """Construct a new unaccepted loan and write it."""
+        """Construct a new unaccepted loan and write it.
+
+        The loan is not accepted until the borrower signs it.
+
+        Args:
+            borrower: the borrower id
+            lender: the lender id
+            principal_amount: the principal amount of the loan
+            repayment_schedule: the repayment schedule of the loan
+            offer_expiry: the expiry date of the loan offer
+        """
         self.loan_id = str(uuid.uuid4())
         self.borrower = borrower
         self.lender = lender
@@ -50,7 +61,16 @@ class LoanWriter():
         )
 
     @staticmethod
-    def from_data(ipfs: Ipfs, data: Store):
+    def from_data(ipfs: Ipfs, data: Store) -> Self:
+        """Construct a loan from data.
+        
+        Args:
+            ipfs: the ipfs client
+            data: the data to construct the loan from
+
+        Returns:
+            LoanWriter: the constructed loan
+        """
         return LoanWriter(
             ipfs=ipfs,
             borrower=data.index["borrower"],
@@ -60,7 +80,8 @@ class LoanWriter():
             offer_expiry=data.reader.offer_expiry
         )
 
-    def write(self):
+    def write(self: Self) -> None:
+        """Write the loan to IPFS."""
         self._generate_index()
 
         store = Store(
@@ -71,7 +92,8 @@ class LoanWriter():
 
         store.add()
     
-    def _generate_index(self):
+    def _generate_index(self: Self) -> None:
+        """Generate the index for the loan."""
         self.index = Index(
             prefix=PREFIX,
             index={
