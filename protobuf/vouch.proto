@@ -5,7 +5,5 @@ package nanoswap.message;
 // "vouchee": person receiving the vouch
 
 // ipfs filename:
-//   vouch/vouch_<vouchee_id>/created_<timestamp>
-message Vouch {
-    string voucher = 1;
-}
+//   vouch/vouchee_<vouchee_id>.voucher_<voucher_id>/created_<timestamp>
+message Vouch { }

@@ -7,7 +7,7 @@ from ipfskvs.index import Index  # noqa: I201
 from ipfsclient.ipfs import Ipfs  # noqa: I201
 
 from bizlogic.protoc.loan_application_pb2 import LoanApplication
-from bizlogic.utils import TestingOnly
+from bizlogic.utils import TestingOnly, Utils, ParserType, GROUP_BY, PARSERS
 
 PREFIX = "application"
 
@@ -101,12 +101,21 @@ class LoanApplicationReader():
             reader=LoanApplication()
         )
 
+        # # filter for open applications
+        # applications = list(applications)
+        # # print("apps start")
+        # print(len([application for application in applications]))
+        # print(len([application for application in applications if not bool(application.reader.closed)]))
+        # print(len([application for application in applications if bool(application.reader.closed)]))
+
+        df = Store.to_dataframe(applications, PARSERS[ParserType.LOAN_APPLICATION])
+
+        # filter for most recent applications per loan_id
+        df = Utils.get_most_recent(df, GROUP_BY[ParserType.LOAN_APPLICATION])
+
         # filter for open applications
-        return [
-            application
-            for application in applications
-            if not application.reader.closed
-        ]
+        return df[~df['closed']]
+
     
     def get_loan_applications_for_borrower(self: Self, borrower: str) -> Iterator[Store]:
         return Store.query(
