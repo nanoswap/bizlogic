@@ -64,18 +64,11 @@ class Utils:
 
         # group by application|loan|vouch
         # and get the row with the maximum "created" timestamp per group
-        max_created_per_app = df.groupby(
-            group_by
-        )['created'].max().reset_index()
+        df = df.sort_values('created').groupby(
+            group_by, as_index=False
+        ).last()
 
-        # join the original dataframe with the grouped data
-        # to get the full row with the maximum "created" per application
-        return pd.merge(
-            df,
-            max_created_per_app,
-            on=[group_by, 'created'],
-            how='inner'
-        )
+        return df
 
     @staticmethod
     def parse_offer_expiry(store: Store) -> datetime.date:

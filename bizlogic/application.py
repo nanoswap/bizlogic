@@ -90,48 +90,35 @@ class LoanApplicationReader():
     def __init__(self: Self, ipfsclient: Ipfs):
         self.ipfsclient = ipfsclient
 
-    def get_open_loan_applications(self: Self) -> Iterator[Store]:
+    def query_loan_applications(self: Self, borrower: str = None, open_only=True) -> Iterator[Store]:
+        # format query parameters
+        index = {
+            "borrower": borrower
+        } if borrower else {}
+
         # get all applications from ipfs
         applications = Store.query(
             query_index=Index(
                 prefix=PREFIX,
-                index={}
-            ),
-            ipfs=self.ipfsclient,
-            reader=LoanApplication()
-        )
-
-        # # filter for open applications
-        # applications = list(applications)
-        # # print("apps start")
-        # print(len([application for application in applications]))
-        # print(len([application for application in applications if not bool(application.reader.closed)]))
-        # print(len([application for application in applications if bool(application.reader.closed)]))
-
-        df = Store.to_dataframe(applications, PARSERS[ParserType.LOAN_APPLICATION])
-
-        # filter for most recent applications per loan_id
-        df = Utils.get_most_recent(df, GROUP_BY[ParserType.LOAN_APPLICATION])
-
-        # filter for open applications
-        return df[~df['closed']]
-
-    
-    def get_loan_applications_for_borrower(self: Self, borrower: str) -> Iterator[Store]:
-        return Store.query(
-            query_index=Index(
-                prefix=PREFIX,
-                index={
-                    "borrower": borrower
-                },
+                index=index,
                 size=2
             ),
             ipfs=self.ipfsclient,
             reader=LoanApplication()
         )
 
-    def get_loan_application(self: Self, application_id: str) -> Iterator[Store]:
-        return Store.query(
+        # parse applications into a dataframe
+        df = Store.to_dataframe(applications, PARSERS[ParserType.LOAN_APPLICATION])
+
+        # filter for most recent applications per loan_id
+        df = Utils.get_most_recent(df, GROUP_BY[ParserType.LOAN_APPLICATION])
+
+        # filter for open applications
+        return df[~df['closed']] if open_only else df
+
+    def get_loan_application(self: Self, application_id: str, open_only=False) -> Iterator[Store]:
+        # query ipfs
+        applications = Store.query(
             query_index=Index(
                 prefix=PREFIX,
                 index={
@@ -142,3 +129,12 @@ class LoanApplicationReader():
             ipfs=self.ipfsclient,
             reader=LoanApplication()
         )
+
+        # parse results into a dataframe
+        df = Store.to_dataframe(applications, PARSERS[ParserType.LOAN_APPLICATION])
+
+        # filter for most recent applications per loan_id
+        df = Utils.get_most_recent(df, GROUP_BY[ParserType.LOAN_APPLICATION])
+
+        # filter for open applications
+        return df[~df['closed']] if open_only else df
