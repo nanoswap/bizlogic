@@ -1,6 +1,7 @@
 import time
+import uuid
 import pandas as pd
-from typing import Iterator, Self, List
+from typing import Iterator, Self
 from bizlogic.utils import TestingOnly
 # "voucher": person giving the vouch
 # "vouchee": person receiving the vouch
@@ -19,6 +20,7 @@ PREFIX = "vouch"
 
 
 class VouchWriter():
+    vouch_id: str
     vouchee: str
     voucher: str
     ipfsclient: Ipfs
@@ -30,6 +32,7 @@ class VouchWriter():
             voucher: str,
             vouchee: str) -> None:
         """Constructor"""
+        self.vouch_id = str(uuid.uuid4())
         self.vouchee = vouchee
         self.voucher = voucher
         self.ipfsclient = ipfsclient
@@ -55,14 +58,15 @@ class VouchWriter():
             writer=self.data
         )
 
-        store.delete(check_directory=True)
+        store.delete()
 
     def _generate_index(self: Self) -> None:
         self.index = Index(
             prefix=PREFIX,
             index={
                 "vouchee": self.vouchee,
-                "voucher": self.voucher
+                "voucher": self.voucher,
+                "vouch": self.vouch_id
             },
             subindex=Index(
                 index={
@@ -86,9 +90,6 @@ class VouchReader():
             ipfs=self.ipfsclient,
             reader=Vouch()
         )
-
-        print(list(query_results))
-        print(list([result.index for result in query_results]))
 
         # parse applications into a dataframe
         df = Store.to_dataframe(query_results, PARSERS[ParserType.VOUCH])

@@ -20,46 +20,52 @@ class TestVouch(unittest.TestCase):
 
         # Read all vouches
         reader = VouchReader(self.ipfsclient)
-        all_vouches = list(reader.get_all_vouches())
+        df = reader.get_all_vouches()
 
         # Check if the vouch is in all vouches
-        self.assertTrue(any(vouch.index.index["vouchee"] == vouchee and vouch.index.index["voucher"] == voucher for vouch in all_vouches))
+        self.assertFalse(df[df['vouchee'].isin([vouchee])].empty)
+        self.assertFalse(df[df['voucher'].isin([voucher])].empty)
+        self.assertFalse(df[(df['vouchee'] == vouchee) & (df['voucher'] == voucher)].empty)  # noqa: E501
 
         # Clean up
         writer.delete()
 
-    # def test_get_vouchers_for_borrower(self):
-    #     vouchee = str(uuid.uuid4())
-    #     voucher = str(uuid.uuid4())
+    def test_get_vouchers_for_borrower(self):
+        vouchee = str(uuid.uuid4())
+        voucher = str(uuid.uuid4())
 
-    #     # Create a vouch
-    #     writer = VouchWriter(self.ipfsclient, vouchee, voucher)
-    #     writer.write()
+        # Create a vouch
+        writer = VouchWriter(self.ipfsclient, vouchee, voucher)
+        writer.write()
 
-    #     # Get vouchers for the borrower
-    #     reader = VouchReader(self.ipfsclient)
-    #     vouchers = reader.get_vouchers_for_borrower(vouchee)
+        # Get vouchers for the borrower
+        reader = VouchReader(self.ipfsclient)
+        df = reader.get_vouchers_for_borrower(vouchee)
 
-    #     # Check if the vouch is in the vouchers
-    #     self.assertTrue(vouchers.iloc[0]["voucher"] == voucher and vouchers.iloc[0]["vouchee"] == vouchee)
+        # Check if the vouch is in the vouchers
+        self.assertFalse(df[df['vouchee'].isin([voucher])].empty)
+        self.assertFalse(df[df['voucher'].isin([vouchee])].empty)
+        self.assertFalse(df[(df['vouchee'] == voucher) & (df['voucher'] == vouchee)].empty)  # noqa: E501
 
-    #     # Clean up
-    #     writer.delete()
+        # Clean up
+        writer.delete()
 
-    # def test_get_vouchees_for_borrower(self):
-    #     vouchee = str(uuid.uuid4())
-    #     voucher = str(uuid.uuid4())
+    def test_get_vouchees_for_borrower(self):
+        vouchee = str(uuid.uuid4())
+        voucher = str(uuid.uuid4())
 
-    #     # Create a vouch
-    #     writer = VouchWriter(self.ipfsclient, vouchee, voucher)
-    #     writer.write()
+        # Create a vouch
+        writer = VouchWriter(self.ipfsclient, vouchee, voucher)
+        writer.write()
 
-    #     # Get vouchees for the borrower
-    #     reader = VouchReader(self.ipfsclient)
-    #     vouchees = reader.get_vouchees_for_borrower(voucher)
+        # Get vouchees for the borrower
+        reader = VouchReader(self.ipfsclient)
+        df = reader.get_vouchees_for_borrower(voucher)
 
-    #     # Check if the vouch is in the vouchees
-    #     self.assertTrue(vouchees.iloc[0]["voucher"] == voucher and vouchees.iloc[0]["vouchee"] == vouchee)
+        # Check if the vouch is in the vouchees
+        self.assertFalse(df[df['vouchee'].isin([voucher])].empty)
+        self.assertFalse(df[df['voucher'].isin([vouchee])].empty)
+        self.assertFalse(df[(df['vouchee'] == voucher) & (df['voucher'] == vouchee)].empty)  # noqa: E501
 
-    #     # Clean up
-    #     writer.delete()
+        # Clean up
+        writer.delete()
