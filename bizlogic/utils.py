@@ -97,9 +97,7 @@ PARSERS = {
         "accepted": lambda store: store.reader.accepted,
         "payments": lambda store: len(store.reader.repayment_schedule)
     },
-    ParserType.VOUCH: {
-        "voucher": lambda store: store.reader.voucher
-    }
+    ParserType.VOUCH: {}  # no content needed to parse for vouchers
 }
 
 GROUP_BY = {

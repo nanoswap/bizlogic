@@ -1,5 +1,7 @@
 import time
+import pandas as pd
 from typing import Iterator, Self, List
+from bizlogic.utils import TestingOnly
 # "voucher": person giving the vouch
 # "vouchee": person receiving the vouch
 
@@ -11,6 +13,7 @@ from ipfskvs.store import Store
 from ipfsclient.ipfs import Ipfs
 
 from bizlogic.protoc.vouch_pb2 import Vouch
+from bizlogic.utils import TestingOnly, Utils, ParserType, GROUP_BY, PARSERS
 
 PREFIX = "vouch"
 
@@ -30,7 +33,7 @@ class VouchWriter():
         self.vouchee = vouchee
         self.voucher = voucher
         self.ipfsclient = ipfsclient
-        self.data = Vouch(voucher=voucher)
+        self.data = Vouch(active=True)
 
     def write(self: Self) -> None:
         self._generate_index()
@@ -43,6 +46,17 @@ class VouchWriter():
 
         store.add()
     
+    @TestingOnly.decorator
+    def delete(self):
+        # don't need to generate index, just delete the store
+        store = Store(
+            index=self.index,
+            ipfs=self.ipfsclient,
+            writer=self.data
+        )
+
+        store.delete(check_directory=True)
+
     def _generate_index(self: Self) -> None:
         self.index = Index(
             prefix=PREFIX,
@@ -64,7 +78,7 @@ class VouchReader():
         self.ipfsclient = ipfsclient
 
     def get_all_vouches(self: Self) -> Iterator[Store]:
-        return Store.query(
+        query_results = Store.query(
             query_index=Index(
                 prefix=PREFIX,
                 index={}
@@ -73,11 +87,20 @@ class VouchReader():
             reader=Vouch()
         )
 
+        print(list(query_results))
+        print(list([result.index for result in query_results]))
+
+        # parse applications into a dataframe
+        df = Store.to_dataframe(query_results, PARSERS[ParserType.VOUCH])
+
+        # filter for most recent applications per loan_id
+        return Utils.get_most_recent(df, GROUP_BY[ParserType.VOUCH])
+
     def get_vouchers_for_borrower(
         self: Self,
         borrower: str
-    ) -> Iterator[Store]:
-        return Store.query(
+    ) -> pd.DataFrame:
+        query_results = Store.query(
             query_index=Index(
                 prefix=PREFIX,
                 index={
@@ -89,11 +112,17 @@ class VouchReader():
             reader=Vouch()
         )
 
+        # parse applications into a dataframe
+        df = Store.to_dataframe(query_results, PARSERS[ParserType.VOUCH])
+
+        # filter for most recent applications per loan_id
+        return Utils.get_most_recent(df, GROUP_BY[ParserType.VOUCH])
+
     def get_vouchees_for_borrower(
         self: Self,
         borrower: str
     ) -> Iterator[Store]:
-        return Store.query(
+        query_results = Store.query(
             query_index=Index(
                 prefix=PREFIX,
                 index={
@@ -104,3 +133,9 @@ class VouchReader():
             ipfs=self.ipfsclient,
             reader=Vouch()
         )
+
+        # parse applications into a dataframe
+        df = Store.to_dataframe(query_results, PARSERS[ParserType.VOUCH])
+
+        # filter for most recent applications per loan_id
+        return Utils.get_most_recent(df, GROUP_BY[ParserType.VOUCH])

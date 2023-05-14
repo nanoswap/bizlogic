@@ -6,4 +6,6 @@ package nanoswap.message;
 
 // ipfs filename:
 //   vouch/vouchee_<vouchee_id>.voucher_<voucher_id>/created_<timestamp>
-message Vouch { }
+message Vouch {
+    bool active = 1;
+}

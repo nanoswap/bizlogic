@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0bvouch.proto\x12\x10nanoswap.message\"\x18\n\x05Vouch\x12\x0f\n\x07voucher\x18\x01 \x01(\tb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0bvouch.proto\x12\x10nanoswap.message\"\x17\n\x05Vouch\x12\x0e\n\x06\x61\x63tive\x18\x01 \x01(\x08\x62\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'vouch_pb2', globals())
@@ -21,5 +21,5 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   _VOUCH._serialized_start=33
-  _VOUCH._serialized_end=57
+  _VOUCH._serialized_end=56
 # @@protoc_insertion_point(module_scope)

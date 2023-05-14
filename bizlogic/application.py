@@ -59,7 +59,7 @@ class LoanApplicationWriter():
             writer=self.data
         )
 
-        store.delete()
+        store.delete(check_directory=True)
     
     def _generate_index(self):
         self.index = Index(
