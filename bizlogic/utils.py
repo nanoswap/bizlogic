@@ -1,6 +1,8 @@
-import pandas as pd
 import datetime
+
 from ipfskvs.store import Store
+
+import pandas as pd
 
 
 class ParserType:
@@ -13,13 +15,15 @@ class ParserType:
 
 class TestingOnly:
     """A class to indicate that a function is for testing purposes only."""
+
     testing_mode: bool = False
 
     @classmethod
-    def decorator(cls, func):
-        def wrapper(*args, **kwargs):
+    def decorator(cls, func):  # noqa: ANN102, ANN001, ANN206
+        """Indicate a function is for testing purposes only."""
+        def wrapper(*args, **kwargs):  # noqa: ANN206, ANN201, ANN003, ANN002
             if not cls.testing_mode:
-                raise RuntimeError(f"{func.__name__} is for testing purposes only and should not be called in production.")
+                raise RuntimeError(f"{func.__name__} is for testing purposes only and should not be called in production.")  # noqa: E501
             return func(*args, **kwargs)
         return wrapper
 
