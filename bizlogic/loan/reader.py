@@ -20,8 +20,20 @@ class LoanReader():
         """Constructor."""
         self.ipfsclient = ipfsclient
  
-    def get_open_loan_offers(self: Self, borrower: str, recent_only: bool = True) -> pd.DataFrame:
-        """Get all open loan offers for a borrower."""
+    def get_open_loan_offers(
+            self: Self,
+            borrower: str,
+            recent_only: bool = True) -> pd.DataFrame:
+        """Get all open loan offers for a borrower.
+
+        Args:
+            borrower (str): The borrower to get open loan offers for.
+            recent_only (bool, optional): Include previous updates or
+                only get the most recent. Defaults to True.
+
+        Returns:
+            pd.DataFrame: The open loan offers for the borrower.
+        """        
         return self.query_for_status(
             status=LoanStatus.PENDING_ACCEPTANCE,
             index=Index(
@@ -34,8 +46,21 @@ class LoanReader():
             recent_only=recent_only
         )
 
-    def query_for_status(self: Self, status: LoanStatusType, index: dict = {}, recent_only: bool = True) -> pd.DataFrame:
-        """Query for loans with a specific status."""
+    def query_for_status(
+            self: Self,
+            status: LoanStatusType,
+            index: dict = {},
+            recent_only: bool = True) -> pd.DataFrame:
+        """Query for loans with a specific status.
+
+        Args:
+            status (LoanStatusType): The status to query for.
+            index (dict, optional): Additional search/filter options, ex {"borrower": 123}. Defaults to {}.
+            recent_only (bool, optional): Include previous updates or
+                only get the most recent. Defaults to True.
+        Returns:
+            pd.DataFrame: The loans with the specified status.
+        """
         # get all applications from ipfs
         loans = Store.query(
             query_index=Index(
@@ -58,8 +83,21 @@ class LoanReader():
 
         return df
 
-    def query_for_borrower(self: Self, borrower: str, recent_only: bool = True) -> pd.DataFrame:
-        """Query for loans with a specific borrower."""
+    def query_for_borrower(
+            self: Self,
+            borrower: str,
+            recent_only: bool = True) -> pd.DataFrame:
+        """Query for loans with a specific borrower.
+
+        Args:
+            borrower (str): The borrower to query for.
+            recent_only (bool, optional): Include previous updates or
+                only get the most recent. Defaults to True.
+
+        Returns:
+            pd.DataFrame: The loans with the specified borrower.
+        """
+        # fetch the loan data from ipfs
         loans = Store.query(
             query_index=Index(
                 prefix=PREFIX,
@@ -81,8 +119,20 @@ class LoanReader():
 
         return df
 
-    def query_for_lender(self: Self, lender: str, recent_only: bool = True) -> pd.DataFrame:
-        """Query for loans with a specific lender."""
+    def query_for_lender(
+            self: Self,
+            lender: str,
+            recent_only: bool = True) -> pd.DataFrame:
+        """Query for loans with a specific lender.
+
+        Args:
+            lender (str): The lender to query for.
+            recent_only (bool, optional): Include previous updates or
+                only get the most recent. Defaults to True.
+
+        Returns:
+            pd.DataFrame: The loans with the specified lender.
+        """
         loans = Store.query(
             query_index=Index(
                 prefix=PREFIX,
@@ -105,7 +155,16 @@ class LoanReader():
         return df
 
     def query_for_loan(self: Self, loan_id: str, recent_only: bool = True) -> pd.DataFrame:
-        """Query for a specific loan."""
+        """Query for a specific loan.
+
+        Args:
+            loan_id (str): The loan to query for.
+            recent_only (bool, optional): Include previous updates or
+                only get the most recent. Defaults to True.
+
+        Returns:
+            pd.DataFrame: The loan with the specified id.
+        """
         loans = Store.query(
             query_index=Index(
                 prefix=PREFIX,
@@ -126,4 +185,3 @@ class LoanReader():
             df = Utils.get_most_recent(df, GROUP_BY[ParserType.LOAN])
 
         return df
-
