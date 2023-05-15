@@ -1,25 +1,28 @@
 
-from typing import Iterator, Self
-import pandas as pd
+from typing import Self
 
 from bizlogic.loan import PREFIX
 from bizlogic.loan.status import LoanStatus, LoanStatusType
 from bizlogic.protoc.loan_pb2 import Loan
-from bizlogic.utils import Utils, ParserType, GROUP_BY, PARSERS
+from bizlogic.utils import GROUP_BY, PARSERS, ParserType, Utils
 
 from ipfsclient.ipfs import Ipfs
 
 from ipfskvs.index import Index
 from ipfskvs.store import Store
 
+import pandas as pd
+
 
 class LoanReader():
+    """Loan Reader."""
+
     ipfsclient: Ipfs
 
     def __init__(self: Self, ipfsclient: Ipfs) -> None:
-        """Constructor."""
+        """Create a Loan Reader."""
         self.ipfsclient = ipfsclient
- 
+
     def get_open_loan_offers(
             self: Self,
             borrower: str,
@@ -33,7 +36,7 @@ class LoanReader():
 
         Returns:
             pd.DataFrame: The open loan offers for the borrower.
-        """        
+        """
         return self.query_for_status(
             status=LoanStatus.PENDING_ACCEPTANCE,
             index=Index(
@@ -51,11 +54,12 @@ class LoanReader():
             status: LoanStatusType,
             index: dict = {},
             recent_only: bool = True) -> pd.DataFrame:
-        """Query for loans with a specific status.
+        """Query for loans with a specific status.  # noqa: D411, D415
 
         Args:
             status (LoanStatusType): The status to query for.
-            index (dict, optional): Additional search/filter options, ex {"borrower": 123}. Defaults to {}.
+            index (dict, optional): Additional search/filter options,
+                ex {"borrower": 123}. Defaults to {}.
             recent_only (bool, optional): Include previous updates or
                 only get the most recent. Defaults to True.
         Returns:
@@ -154,7 +158,10 @@ class LoanReader():
 
         return df
 
-    def query_for_loan(self: Self, loan_id: str, recent_only: bool = True) -> pd.DataFrame:
+    def query_for_loan(
+            self: Self,
+            loan_id: str,
+            recent_only: bool = True) -> pd.DataFrame:
         """Query for a specific loan.
 
         Args:

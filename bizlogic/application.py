@@ -1,13 +1,15 @@
 import time
-from typing import Iterator, List, Self
 import uuid
-
-from ipfskvs.store import Store  # noqa: I201
-from ipfskvs.index import Index  # noqa: I201
-from ipfsclient.ipfs import Ipfs  # noqa: I201
+from typing import Self
 
 from bizlogic.protoc.loan_application_pb2 import LoanApplication
-from bizlogic.utils import TestingOnly, Utils, ParserType, GROUP_BY, PARSERS
+from bizlogic.utils import GROUP_BY, PARSERS, ParserType, TestingOnly, Utils
+
+from ipfsclient.ipfs import Ipfs  # noqa: I201
+
+from ipfskvs.index import Index  # noqa: I201
+from ipfskvs.store import Store  # noqa: I201
+
 import pandas as pd
 
 PREFIX = "application"
@@ -65,7 +67,7 @@ class LoanApplicationWriter():
         )
 
         store.add()
-    
+
     @TestingOnly.decorator
     def delete(self: Self) -> None:
         """Delete the loan application from IPFS."""
@@ -77,7 +79,7 @@ class LoanApplicationWriter():
         )
 
         store.delete()
-    
+
     def _generate_index(self: Self) -> None:
         """Generate the index for the loan application."""
         self.index = Index(

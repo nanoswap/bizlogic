@@ -1,25 +1,31 @@
 import time
 import uuid
-import pandas as pd
-from typing import Iterator, Self
-from bizlogic.utils import TestingOnly
-# "voucher": person giving the vouch
-# "vouchee": person receiving the vouch
+from typing import Self
 
-# ipfs filename:
-#   vouch/vouchee_<id>.voucher_<id>/created_<timestamp>
+from bizlogic.protoc.vouch_pb2 import Vouch
+from bizlogic.utils import GROUP_BY, PARSERS, ParserType, TestingOnly, Utils
+
+from ipfsclient.ipfs import Ipfs
 
 from ipfskvs.index import Index
 from ipfskvs.store import Store
-from ipfsclient.ipfs import Ipfs
 
-from bizlogic.protoc.vouch_pb2 import Vouch
-from bizlogic.utils import TestingOnly, Utils, ParserType, GROUP_BY, PARSERS
+import pandas as pd
+
 
 PREFIX = "vouch"
 
 
-class VouchWriter():
+class VouchWriter:
+    """Class for writing Vouches.
+
+    "voucher": person giving the vouch
+    "vouchee": person receiving the vouch
+
+    ipfs filename:
+        vouch/vouchee_<id>.voucher_<id>/created_<timestamp>
+    """
+
     vouch_id: str
     vouchee: str
     voucher: str
@@ -31,7 +37,13 @@ class VouchWriter():
             ipfsclient: Ipfs,
             voucher: str,
             vouchee: str) -> None:
-        """Constructor"""
+        """Initialize VouchWriter.
+
+        Args:
+            ipfsclient (Ipfs): IPFS client.
+            voucher (str): voucher string.
+            vouchee (str): vouchee string.
+        """
         self.vouch_id = str(uuid.uuid4())
         self.vouchee = vouchee
         self.voucher = voucher
@@ -39,6 +51,7 @@ class VouchWriter():
         self.data = Vouch(active=True)
 
     def write(self: Self) -> None:
+        """Write the Vouch."""
         self._generate_index()
 
         store = Store(
@@ -48,11 +61,10 @@ class VouchWriter():
         )
 
         store.add()
-    
+
     @TestingOnly.decorator
-    def delete(self):
+    def delete(self: Self) -> None:
         """Delete the vouch from IPFS."""
-        # don't need to generate index, just delete the store
         store = Store(
             index=self.index,
             ipfs=self.ipfsclient,

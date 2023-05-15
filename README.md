@@ -32,6 +32,7 @@ https://bizlogic.readthedocs.io/
 
 ## Tests
 To only run tests: `pytest --cov=bizlogic --log-cli-level=debug`  
+To only run lints: `flake8 bizlogic --docstring-convention google --ignore=D100,D104 --exclude=loan_pb2.py,vouch_pb2.py,loan_application_pb2.py`
 To run all checks: `nox`
 
 ### Before running tests:
