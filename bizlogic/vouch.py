@@ -51,6 +51,7 @@ class VouchWriter():
     
     @TestingOnly.decorator
     def delete(self):
+        """Delete the vouch from IPFS."""
         # don't need to generate index, just delete the store
         store = Store(
             index=self.index,
@@ -61,6 +62,7 @@ class VouchWriter():
         store.delete()
 
     def _generate_index(self: Self) -> None:
+        """Generate the index for the vouch."""
         self.index = Index(
             prefix=PREFIX,
             index={
@@ -75,13 +77,26 @@ class VouchWriter():
             )
         )
 
+
 class VouchReader():
+    """Read and query vouches from IPFS."""
+
     ipfsclient: Ipfs
 
     def __init__(self: Self, ipfsclient: Ipfs) -> None:
+        """Create a new vouch reader.
+
+        Args:
+            ipfsclient (Ipfs): The ipfs client
+        """
         self.ipfsclient = ipfsclient
 
-    def get_all_vouches(self: Self) -> Iterator[Store]:
+    def get_all_vouches(self: Self) -> pd.DataFrame:
+        """Get all vouches.
+
+        Returns:
+            pd.DataFrame: A dataframe of all vouches
+        """
         query_results = Store.query(
             query_index=Index(
                 prefix=PREFIX,
@@ -97,38 +112,34 @@ class VouchReader():
         # filter for most recent applications per loan_id
         return Utils.get_most_recent(df, GROUP_BY[ParserType.VOUCH])
 
-    def get_vouchers_for_borrower(
+    def query_vouches(
         self: Self,
-        borrower: str
+        voucher: str = None,
+        vouchee: str = None
     ) -> pd.DataFrame:
+        """Search vouches for a vouchee or voucher.
+
+        Args:
+            voucher (str, optional): The voucher to search for.
+                Defaults to None.
+            vouchee (str, optional): The vouchee to search for.
+                Defaults to None.
+
+        Returns:
+            pd.DataFrame: A dataframe of all vouches matching the query
+        """
+        assert voucher or vouchee, "Must provide voucher or vouchee"
+
+        index = {
+            "voucher": voucher
+        } if voucher else {
+            "vouchee": vouchee
+        }
+
         query_results = Store.query(
             query_index=Index(
                 prefix=PREFIX,
-                index={
-                    "voucher": borrower
-                },
-                size=2
-            ),
-            ipfs=self.ipfsclient,
-            reader=Vouch()
-        )
-
-        # parse applications into a dataframe
-        df = Store.to_dataframe(query_results, PARSERS[ParserType.VOUCH])
-
-        # filter for most recent applications per loan_id
-        return Utils.get_most_recent(df, GROUP_BY[ParserType.VOUCH])
-
-    def get_vouchees_for_borrower(
-        self: Self,
-        borrower: str
-    ) -> Iterator[Store]:
-        query_results = Store.query(
-            query_index=Index(
-                prefix=PREFIX,
-                index={
-                    "vouchee": borrower
-                },
+                index=index,
                 size=2
             ),
             ipfs=self.ipfsclient,
