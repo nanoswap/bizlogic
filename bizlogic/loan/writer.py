@@ -4,22 +4,23 @@ import time
 import uuid
 from typing import List, Self
 
+from bizlogic.loan import PREFIX
+from bizlogic.protoc.loan_pb2 import Loan, LoanPayment
+
 from google.protobuf.timestamp_pb2 import Timestamp
 
-from ipfskvs.store import Store
 from ipfsclient.ipfs import Ipfs
+
 from ipfskvs.index import Index
-
-from bizlogic.protoc.loan_pb2 import Loan, LoanPayment
-from bizlogic.loan import PREFIX
-
-
-# ipfs filename:
-#   loan/borrower_<id>.lender_<id>.loan_<id>/created_<timestamp>
+from ipfskvs.store import Store
 
 
 class LoanWriter():
-    """Loan Writer."""
+    """Loan Writer.
+
+    ipfs filename:
+        loan/borrower_<id>.lender_<id>.loan_<id>/created_<timestamp>
+    """
 
     loan_id: str
     borrower: str
@@ -41,6 +42,7 @@ class LoanWriter():
         The loan is not accepted until the borrower signs it.
 
         Args:
+            ipfs: the ipfs client
             borrower: the borrower id
             lender: the lender id
             principal_amount: the principal amount of the loan
@@ -63,7 +65,7 @@ class LoanWriter():
     @staticmethod
     def from_data(ipfs: Ipfs, data: Store) -> Self:
         """Construct a loan from data.
-        
+
         Args:
             ipfs: the ipfs client
             data: the data to construct the loan from
@@ -91,7 +93,7 @@ class LoanWriter():
         )
 
         store.add()
-    
+
     def _generate_index(self: Self) -> None:
         """Generate the index for the loan."""
         self.index = Index(
@@ -108,7 +110,8 @@ class LoanWriter():
             )
         )
 
-    def accept_terms(self: Self):
+    def accept_terms(self: Self) -> None:
+        """Accept the loan terms."""
         self.data = Loan(
             principal_amount=self.data.principal_amount,
             repayment_schedule=self.data.repayment_schedule,
@@ -116,7 +119,16 @@ class LoanWriter():
             accepted=True
         )
 
-    def register_payment(self: Self, payment_id: str, transaction: str):
+    def register_payment(
+            self: Self,
+            payment_id: str,
+            transaction: str) -> None:
+        """Register a payment.
+
+        Args:
+            payment_id: the payment id
+            transaction: the transaction id
+        """
         new_repayment_schedule = []
         for payment in self.data.repayment_schedule:
             if payment.payment_id == payment_id:
