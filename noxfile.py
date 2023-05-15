@@ -20,9 +20,9 @@ def build(session: nox.Session) -> None:
     session.install("poetry")
     session.run("poetry", "build")
 
-    # publish pip package
-    session.install("twine")
-    session.run("twine", "upload", "dist/*")
+    # # publish pip package
+    # session.install("twine")
+    # session.run("twine", "upload", "dist/*")
 
 
 @nox.session(python=["python3.11"])
@@ -44,7 +44,8 @@ def lint(session: nox.Session) -> None:
     session.run(
         'flake8', 'bizlogic',
         '--docstring-convention', 'google',
-        '--ignore=D100,D104'
+        '--ignore=D100,D104',
+        "--exclude=loan_pb2.py,vouch_pb2.py,loan_application_pb2.py"
     )
 
     # lint the tests

@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x16loan_application.proto\x12\x10nanoswap.message\"8\n\x0fLoanApplication\x12\x15\n\ramount_asking\x18\x01 \x01(\x03\x12\x0e\n\x06\x63losed\x18\x03 \x01(\x08\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x16loan_application.proto\x12\x10nanoswap.message\"8\n\x0fLoanApplication\x12\x15\n\ramount_asking\x18\x01 \x01(\x03\x12\x0e\n\x06\x63losed\x18\x02 \x01(\x08\x62\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'loan_application_pb2', globals())

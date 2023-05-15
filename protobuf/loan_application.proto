@@ -2,8 +2,8 @@ syntax = "proto3";
 package nanoswap.message;
 
 // ipfs filename:
-//   application/borrower_<id>/created_<timestamp>
+//   application/borrower_<id>.application_<ui>/created_<timestamp>
 message LoanApplication {
     int64 amount_asking = 1;
-    bool closed = 3;
+    bool closed = 2;
 }
