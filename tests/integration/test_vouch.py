@@ -30,42 +30,42 @@ class TestVouch(unittest.TestCase):
         # Clean up
         writer.delete()
 
-    def test_get_vouchers_for_borrower(self):
+    def test_query_vouches_for_voucher(self):
         vouchee = str(uuid.uuid4())
         voucher = str(uuid.uuid4())
 
         # Create a vouch
-        writer = VouchWriter(self.ipfsclient, vouchee, voucher)
+        writer = VouchWriter(self.ipfsclient, voucher, vouchee)
         writer.write()
 
-        # Get vouchers for the borrower
+        # Query vouches for the voucher
         reader = VouchReader(self.ipfsclient)
-        df = reader.get_vouchers_for_borrower(vouchee)
+        df = reader.query_vouches(voucher=voucher)
 
-        # Check if the vouch is in the vouchers
-        self.assertFalse(df[df['vouchee'].isin([voucher])].empty)
-        self.assertFalse(df[df['voucher'].isin([vouchee])].empty)
-        self.assertFalse(df[(df['vouchee'] == voucher) & (df['voucher'] == vouchee)].empty)  # noqa: E501
+        # Check if the vouch is in the query results
+        self.assertFalse(df[df['vouchee'].isin([vouchee])].empty)
+        self.assertFalse(df[df['voucher'].isin([voucher])].empty)
+        self.assertFalse(df[(df['vouchee'] == vouchee) & (df['voucher'] == voucher)].empty)  # noqa: E501
 
         # Clean up
         writer.delete()
 
-    def test_get_vouchees_for_borrower(self):
+    def test_query_vouches_for_vouchee(self):
         vouchee = str(uuid.uuid4())
         voucher = str(uuid.uuid4())
 
         # Create a vouch
-        writer = VouchWriter(self.ipfsclient, vouchee, voucher)
+        writer = VouchWriter(self.ipfsclient, voucher, vouchee)
         writer.write()
 
-        # Get vouchees for the borrower
+        # Query vouches for the vouchee
         reader = VouchReader(self.ipfsclient)
-        df = reader.get_vouchees_for_borrower(voucher)
+        df = reader.query_vouches(vouchee=vouchee)
 
-        # Check if the vouch is in the vouchees
-        self.assertFalse(df[df['vouchee'].isin([voucher])].empty)
-        self.assertFalse(df[df['voucher'].isin([vouchee])].empty)
-        self.assertFalse(df[(df['vouchee'] == voucher) & (df['voucher'] == vouchee)].empty)  # noqa: E501
+        # Check if the vouch is in the query results
+        self.assertFalse(df[df['vouchee'].isin([vouchee])].empty)
+        self.assertFalse(df[df['voucher'].isin([voucher])].empty)
+        self.assertFalse(df[(df['vouchee'] == vouchee) & (df['voucher'] == voucher)].empty)  # noqa: E501
 
         # Clean up
         writer.delete()
