@@ -128,11 +128,10 @@ class LoanWriter():
                 ))
             else:
                 new_repayment_schedule.append(payment)
-        
+
         self.data = Loan(
             principal_amount=self.data.principal_amount,
             repayment_schedule=self.data.repayment_schedule,
             offer_expiry=self.data.offer_expiry,
             accepted=self.data.accepted
         )
-

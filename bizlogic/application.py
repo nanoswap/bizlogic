@@ -8,6 +8,7 @@ from ipfsclient.ipfs import Ipfs  # noqa: I201
 
 from bizlogic.protoc.loan_application_pb2 import LoanApplication
 from bizlogic.utils import TestingOnly, Utils, ParserType, GROUP_BY, PARSERS
+import pandas as pd
 
 PREFIX = "application"
 
@@ -27,7 +28,7 @@ class LoanApplicationWriter():
     ipfsclient: Ipfs
     data: LoanApplication
 
-    def __init__(self: Self, ipfsclient: Ipfs, borrower: str, amount_asking: int, closed: bool = False):
+    def __init__(self: Self, ipfsclient: Ipfs, borrower: str, amount_asking: int, closed: bool = False) -> None:
         """Constructor"""
         self.application_id = str(uuid.uuid4())
         self.borrower = borrower
@@ -39,7 +40,7 @@ class LoanApplicationWriter():
             closed=self.closed
         )
     
-    def write(self):
+    def write(self) -> None:
 
         self._generate_index()
         store = Store(
@@ -51,7 +52,7 @@ class LoanApplicationWriter():
         store.add()
     
     @TestingOnly.decorator
-    def delete(self):
+    def delete(self) -> None:
         # don't need to generate index, just delete the store
         store = Store(
             index=self.index,
@@ -61,7 +62,7 @@ class LoanApplicationWriter():
 
         store.delete()
     
-    def _generate_index(self):
+    def _generate_index(self) -> None:
         self.index = Index(
             prefix=PREFIX,
             index={
@@ -75,7 +76,7 @@ class LoanApplicationWriter():
             )
         )
 
-    def withdraw_loan_application(self: Self):
+    def withdraw_loan_application(self: Self) -> None:
         # create a new LoanApplication object with closed=True
         self.data = LoanApplication(
             amount_asking=self.amount_asking,
@@ -87,10 +88,10 @@ class LoanApplicationWriter():
 class LoanApplicationReader():
     ipfsclient: Ipfs
 
-    def __init__(self: Self, ipfsclient: Ipfs):
+    def __init__(self: Self, ipfsclient: Ipfs) -> None:
         self.ipfsclient = ipfsclient
 
-    def query_loan_applications(self: Self, borrower: str = None, open_only=True) -> Iterator[Store]:
+    def query_loan_applications(self: Self, borrower: str = None, open_only=True) -> pd.DataFrame:
         # format query parameters
         index = {
             "borrower": borrower
@@ -116,7 +117,7 @@ class LoanApplicationReader():
         # filter for open applications
         return df[~df['closed']] if open_only else df
 
-    def get_loan_application(self: Self, application_id: str, open_only=False) -> Iterator[Store]:
+    def get_loan_application(self: Self, application_id: str, open_only=False) -> pd.DataFrame:
         # query ipfs
         applications = Store.query(
             query_index=Index(

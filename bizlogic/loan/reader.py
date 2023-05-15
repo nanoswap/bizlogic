@@ -1,11 +1,16 @@
-from ipfsclient.ipfs import Ipfs
+
 from typing import Iterator, Self
+import pandas as pd
+
 from bizlogic.loan import PREFIX
 from bizlogic.loan.status import LoanStatus, LoanStatusType
+from bizlogic.protoc.loan_pb2 import Loan
+from bizlogic.utils import Utils, ParserType, GROUP_BY, PARSERS
+
+from ipfsclient.ipfs import Ipfs
+
 from ipfskvs.index import Index
 from ipfskvs.store import Store
-
-from bizlogic.protoc.loan_pb2 import Loan
 
 
 class LoanReader():
@@ -15,7 +20,7 @@ class LoanReader():
         """Constructor."""
         self.ipfsclient = ipfsclient
  
-    def get_open_loan_offers(self: Self, borrower: str) -> Iterator[Store]:
+    def get_open_loan_offers(self: Self, borrower: str, recent_only: bool = True) -> pd.DataFrame:
         """Get all open loan offers for a borrower."""
         return self.query_for_status(
             status=LoanStatus.PENDING_ACCEPTANCE,
@@ -26,9 +31,10 @@ class LoanReader():
                 },
                 size=3
             ),
+            recent_only=recent_only
         )
 
-    def query_for_status(self: Self, status: LoanStatusType, index: dict = {}) -> Iterator[Store]:
+    def query_for_status(self: Self, status: LoanStatusType, index: dict = {}, recent_only: bool = True) -> pd.DataFrame:
         """Query for loans with a specific status."""
         # get all applications from ipfs
         loans = Store.query(
@@ -40,16 +46,21 @@ class LoanReader():
             reader=Loan()
         )
 
-        # filter for unexpired and unaccepted loans
-        return [
-            loan
-            for loan in loans
-            if LoanStatus.loan_status(loan.reader) == status
-        ]
+        # parse results into a dataframe
+        df = Store.to_dataframe(loans, PARSERS[ParserType.LOAN])
 
-    def query_for_borrower(self: Self, borrower: str) -> Iterator[Store]:
+        # filter for unexpired and unaccepted loans
+        df = df[df['loan_status'] == status]
+
+        # filter for most recent applications per loan_id
+        if recent_only:
+            df = Utils.get_most_recent(df, GROUP_BY[ParserType.LOAN])
+
+        return df
+
+    def query_for_borrower(self: Self, borrower: str, recent_only: bool = True) -> pd.DataFrame:
         """Query for loans with a specific borrower."""
-        return Store.query(
+        loans = Store.query(
             query_index=Index(
                 prefix=PREFIX,
                 index={
@@ -61,9 +72,18 @@ class LoanReader():
             reader=Loan()
         )
 
-    def query_for_lender(self: Self, lender: str) -> Iterator[Store]:
+        # parse results into a dataframe
+        df = Store.to_dataframe(loans, PARSERS[ParserType.LOAN])
+
+        # filter for most recent applications per loan_id
+        if recent_only:
+            df = Utils.get_most_recent(df, GROUP_BY[ParserType.LOAN])
+
+        return df
+
+    def query_for_lender(self: Self, lender: str, recent_only: bool = True) -> pd.DataFrame:
         """Query for loans with a specific lender."""
-        return Store.query(
+        loans = Store.query(
             query_index=Index(
                 prefix=PREFIX,
                 index={
@@ -75,9 +95,18 @@ class LoanReader():
             reader=Loan()
         )
 
-    def query_for_loan(self: Self, loan_id: str) -> Iterator[Store]:
+        # parse results into a dataframe
+        df = Store.to_dataframe(loans, PARSERS[ParserType.LOAN])
+
+        # filter for most recent applications per loan_id
+        if recent_only:
+            df = Utils.get_most_recent(df, GROUP_BY[ParserType.LOAN])
+
+        return df
+
+    def query_for_loan(self: Self, loan_id: str, recent_only: bool = True) -> pd.DataFrame:
         """Query for a specific loan."""
-        return Store.query(
+        loans = Store.query(
             query_index=Index(
                 prefix=PREFIX,
                 index={
@@ -88,3 +117,13 @@ class LoanReader():
             ipfs=self.ipfsclient,
             reader=Loan()
         )
+
+        # parse results into a dataframe
+        df = Store.to_dataframe(loans, PARSERS[ParserType.LOAN])
+
+        # filter for most recent applications per loan_id
+        if recent_only:
+            df = Utils.get_most_recent(df, GROUP_BY[ParserType.LOAN])
+
+        return df
+
