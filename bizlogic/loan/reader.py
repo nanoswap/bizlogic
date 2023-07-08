@@ -77,9 +77,14 @@ class LoanReader():
 
         # parse results into a dataframe
         df = Store.to_dataframe(loans, PARSERS[ParserType.LOAN])
+        if df.empty:
+            return df
 
         # filter for unexpired and unaccepted loans
+        df['loan_status'] = df['loan'].apply(LoanStatus.loan_status)
         df = df[df['loan_status'] == status]
+        if df.empty:
+            return df
 
         # filter for most recent applications per loan_id
         if recent_only:
@@ -116,6 +121,8 @@ class LoanReader():
 
         # parse results into a dataframe
         df = Store.to_dataframe(loans, PARSERS[ParserType.LOAN])
+        if df.empty:
+            return df
 
         # filter for most recent applications per loan_id
         if recent_only:
@@ -151,6 +158,8 @@ class LoanReader():
 
         # parse results into a dataframe
         df = Store.to_dataframe(loans, PARSERS[ParserType.LOAN])
+        if df.empty:
+            return df
 
         # filter for most recent applications per loan_id
         if recent_only:
@@ -186,6 +195,8 @@ class LoanReader():
 
         # parse results into a dataframe
         df = Store.to_dataframe(loans, PARSERS[ParserType.LOAN])
+        if df.empty:
+            return df
 
         # filter for most recent applications per loan_id
         if recent_only:

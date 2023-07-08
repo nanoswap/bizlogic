@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 import random
 from typing import Self
 import unittest
@@ -13,7 +13,7 @@ from google.protobuf.timestamp_pb2 import Timestamp
 class TestLoanStatus(unittest.TestCase):
     def test_EXPIRED_UNACCEPTED(self: Self) -> None:
         timestamp = Timestamp()
-        timestamp.FromDatetime(datetime.datetime.now() + datetime.timedelta(days=1))
+        timestamp.FromDatetime(datetime.now() + timedelta(days=1))
         loan = Loan(
             principal_amount=random.choice(range(10)),
             repayment_schedule=[],
@@ -25,7 +25,7 @@ class TestLoanStatus(unittest.TestCase):
 
     def test_PENDING_ACCEPTANCE(self: Self) -> None:
         timestamp = Timestamp()
-        timestamp.FromDatetime(datetime.datetime.now() - datetime.timedelta(days=1))
+        timestamp.FromDatetime(datetime.now() - timedelta(days=1))
         loan = Loan(
             principal_amount=random.choice(range(10)),
             repayment_schedule=[],
@@ -37,7 +37,7 @@ class TestLoanStatus(unittest.TestCase):
 
     def test_expired_ACCEPTED(self: Self) -> None:
         timestamp = Timestamp()
-        timestamp.FromDatetime(datetime.datetime.now() - datetime.timedelta(days=1))
+        timestamp.FromDatetime(datetime.now() - timedelta(days=1))
         loan = Loan(
             principal_amount=random.choice(range(10)),
             repayment_schedule=[],
@@ -49,7 +49,7 @@ class TestLoanStatus(unittest.TestCase):
 
     def test_unexpired_ACCEPTED(self: Self) -> None:
         timestamp = Timestamp()
-        timestamp.FromDatetime(datetime.datetime.now() + datetime.timedelta(days=1))
+        timestamp.FromDatetime(datetime.now() + timedelta(days=1))
         loan = Loan(
             principal_amount=random.choice(range(10)),
             repayment_schedule=[],
