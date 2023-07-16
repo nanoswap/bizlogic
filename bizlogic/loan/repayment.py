@@ -1,6 +1,7 @@
 import datetime
 import uuid
 from typing import List
+import math
 
 from bizlogic.protoc.loan_pb2 import LoanPayment
 
@@ -9,50 +10,68 @@ from google.protobuf.timestamp_pb2 import Timestamp
 
 class PaymentSchedule():
     """Payment Schedule Utilities."""
-
-    @staticmethod
     @staticmethod
     def create_payment_schedule(
-            amount: int,
+            principal: int,
             interest_rate: float,
-            total_duration: datetime.timedelta,
-            number_of_payments: int,
-            first_payment: datetime.date) -> List[LoanPayment]:
+            start_date: datetime.datetime,
+            end_date: datetime.datetime,
+            number_of_payments: int) -> List[LoanPayment]:
         """Generate a list of loan payment objects.
 
+        This method will create a schedule of uniformly distributed payments
+        from start_date to end_date inclusive.
+
         Args:
-            amount (int): The amount of the loan (before interest)
+            principal (int): The amount of the loan (before interest)
             interest_rate (float): The interest rate of the loan in decimal
-                (ex: 1.05 is 5%)
-            total_duration (datetime.timedelta): The time that the borrower
-                has to finish all repayments
-            number_of_payments (int): The number of payments to break up
-                the loan into
-            first_payment (datetime.date): The date of the first payment
+                (ex: 0.05 is 5%)
+            start_date (datetime.datetime): Date when the first payment is due.
+            end_date (datetime.datetime): Date when the last payment is due.
+            number_of_payments (int): The total number of payments to break up
+                the loan into. Must be greater than 2.
 
         Returns:
             List[LoanPayment]: A list of loan payment objects
+
+        Raises:
+            ValueError: If the number of payments is not greater than 2.
         """
-        assert interest_rate > 1, "Interest rate must be greater than 1"
+        if number_of_payments <= 2:
+            raise ValueError("Number of payments must be greater than 2")
 
         # calculate the payment terms
-        total_amount_due = amount * interest_rate
-        amount_due_each_payment = int(total_amount_due / number_of_payments)
+        total_amount_due = principal * (1 + interest_rate)
+        amount_due_each_payment = int(
+            math.ceil(
+                total_amount_due / number_of_payments
+            )
+        )
+
+        # calculate the duration between each payment
+        total_duration = end_date - start_date
+        payment_duration = total_duration / (number_of_payments - 1)
 
         result = []
         for payment_interval in range(number_of_payments):
-
             # calculate the due date
-            timestamp = Timestamp()
-            timestamp.FromDatetime(
-                first_payment + payment_interval * total_duration
-            )
+            due_date = Timestamp()
+            if payment_interval == number_of_payments - 1:
+                # Set the due_date for the last payment to the end_date
+                # (to avoid rounding errors)
+                due_date.FromDatetime(end_date)
+            else:
+                # calculate the due_date for the other payments
+                due_date.FromDatetime(
+                    start_date + payment_duration * payment_interval
+                )
 
             # format the data
-            loan_payment = LoanPayment(
-                payment_id=str(uuid.uuid4()),
-                amount_due=amount_due_each_payment,
-                due_date=timestamp
-            )
+            loan_payment = LoanPayment()
+            loan_payment.payment_id = str(uuid.uuid4())
+            loan_payment.amount_due = amount_due_each_payment
+            loan_payment.due_date.CopyFrom(due_date)
 
             result.append(loan_payment)
+
+        return result
