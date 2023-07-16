@@ -7,4 +7,4 @@ from bizlogic.loan import reader, repayment, status, writer
 from bizlogic.utils import ParserType, TestingOnly, Utils, GROUP_BY, PARSERS
 
 # imported into setup.py
-__version__ = "0.0.19"
+__version__ = "0.1.0"
