@@ -13,7 +13,7 @@ from google.protobuf.timestamp_pb2 import Timestamp
 class TestLoanStatus(unittest.TestCase):
     def test_EXPIRED_UNACCEPTED(self: Self) -> None:
         timestamp = Timestamp()
-        timestamp.FromDatetime(datetime.now() + timedelta(days=1))
+        timestamp.FromDatetime(datetime.now() - timedelta(days=1))  # the loan has already expired
         loan = Loan(
             principal_amount=random.choice(range(10)),
             repayment_schedule=[],
@@ -22,10 +22,9 @@ class TestLoanStatus(unittest.TestCase):
         )
         assert LoanStatus.loan_status(loan) == LoanStatusType.EXPIRED_UNACCEPTED
 
-
     def test_PENDING_ACCEPTANCE(self: Self) -> None:
         timestamp = Timestamp()
-        timestamp.FromDatetime(datetime.now() - timedelta(days=1))
+        timestamp.FromDatetime(datetime.now() + timedelta(days=1))  # the loan has not expired yet
         loan = Loan(
             principal_amount=random.choice(range(10)),
             repayment_schedule=[],
@@ -34,10 +33,9 @@ class TestLoanStatus(unittest.TestCase):
         )
         assert LoanStatus.loan_status(loan) == LoanStatusType.PENDING_ACCEPTANCE
 
-
     def test_expired_ACCEPTED(self: Self) -> None:
         timestamp = Timestamp()
-        timestamp.FromDatetime(datetime.now() - timedelta(days=1))
+        timestamp.FromDatetime(datetime.now() - timedelta(days=1))  # the loan has already expired
         loan = Loan(
             principal_amount=random.choice(range(10)),
             repayment_schedule=[],
@@ -46,10 +44,9 @@ class TestLoanStatus(unittest.TestCase):
         )
         assert LoanStatus.loan_status(loan) == LoanStatusType.ACCEPTED
 
-
     def test_unexpired_ACCEPTED(self: Self) -> None:
         timestamp = Timestamp()
-        timestamp.FromDatetime(datetime.now() + timedelta(days=1))
+        timestamp.FromDatetime(datetime.now() + timedelta(days=1))  # the loan has not expired yet
         loan = Loan(
             principal_amount=random.choice(range(10)),
             repayment_schedule=[],
