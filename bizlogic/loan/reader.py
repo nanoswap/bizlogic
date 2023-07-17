@@ -69,7 +69,8 @@ class LoanReader():
         loans = Store.query(
             query_index=Index(
                 prefix=PREFIX,
-                index=index
+                index=index,
+                size=3
             ),
             ipfs=self.ipfsclient,
             reader=Loan()
@@ -81,7 +82,7 @@ class LoanReader():
             return df
 
         # filter for unexpired and unaccepted loans
-        df['loan_status'] = df['loan'].apply(LoanStatus.loan_status)
+        df['loan_status'] = df.apply(LoanStatus.loan_status)
         df = df[df['loan_status'] == status]
         if df.empty:
             return df
