@@ -82,7 +82,7 @@ class LoanReader():
             return df
 
         # filter for unexpired and unaccepted loans
-        df['loan_status'] = df['loan'].apply(LoanStatus.loan_status)
+        df['loan_status'] = df.apply(LoanStatus.loan_status)
         df = df[df['loan_status'] == status]
         if df.empty:
             return df
