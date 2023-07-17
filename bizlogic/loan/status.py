@@ -44,16 +44,13 @@ class LoanStatus():
         now = datetime.now()
         expiry = LoanStatus._timestamp_to_datetime(loan.offer_expiry)
 
-        if expiry <= now and not loan.accepted:
+        if expiry > now and not loan.accepted:  # if the loan has not expired and is not accepted
             return LoanStatusType.PENDING_ACCEPTANCE
 
-        elif expiry > now and not loan.accepted:
+        elif expiry <= now and not loan.accepted:  # if the loan has expired and is not accepted
             return LoanStatusType.EXPIRED_UNACCEPTED
 
-        elif expiry <= now and loan.accepted:
+        elif loan.accepted:  # if the loan is accepted, regardless of expiry
             return LoanStatusType.ACCEPTED
 
-        elif expiry > now and loan.accepted:
-            return LoanStatusType.ACCEPTED
-
-        raise
+        raise ValueError("Unable to determine loan status")
