@@ -69,7 +69,8 @@ class LoanReader():
         loans = Store.query(
             query_index=Index(
                 prefix=PREFIX,
-                index=index
+                index=index,
+                size=3
             ),
             ipfs=self.ipfsclient,
             reader=Loan()
