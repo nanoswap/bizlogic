@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bizlogic"
-version = "0.2.2"
+version = "0.2.6"
 description = "web3 lending platform business logic"
 authors = ["Nate Schultz <nate.schultz@outlook.com>"]
 readme = "README.md"
