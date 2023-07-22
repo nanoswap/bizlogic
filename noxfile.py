@@ -20,7 +20,7 @@ def build(session: nox.Session) -> None:
     session.install("poetry")
     session.run("poetry", "build")
 
-    # # publish pip package
+    # publish pip package
     session.install("twine")
     session.run("twine", "upload", "dist/*")
 

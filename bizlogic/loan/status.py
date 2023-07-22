@@ -18,20 +18,6 @@ class LoanStatus():
     """Loan Status."""
 
     @staticmethod
-    def _timestamp_to_datetime(timestamp: Timestamp) -> datetime:
-        """Convert a protobuf timestamp to a datetime.
-
-        Args:
-            timestamp: the timestamp
-
-        Returns:
-            datetime: the datetime
-        """
-        seconds = datetime.fromtimestamp(timestamp.seconds)
-        micros = timedelta(microseconds=timestamp.nanos / 1000)
-        return seconds + micros
-
-    @staticmethod
     def loan_status(loan: Loan) -> LoanStatusType:
         """Get the status of a loan.
 
@@ -42,15 +28,17 @@ class LoanStatus():
             LoanStatusType: the status of the loan
         """
         now = datetime.now()
-        expiry = LoanStatus._timestamp_to_datetime(loan['offer_expiry'])
 
-        if expiry > now and not loan['accepted']:  # if the loan has not expired and is not accepted
+        # if the loan has not expired and is not accepted
+        if loan['offer_expiry'] > now and not loan['accepted']:
             return LoanStatusType.PENDING_ACCEPTANCE
 
-        elif expiry <= now and not loan['accepted']:  # if the loan has expired and is not accepted
+        # if the loan has expired and is not accepted
+        elif loan['offer_expiry'] <= now and not loan['accepted']:
             return LoanStatusType.EXPIRED_UNACCEPTED
 
-        elif loan['accepted']:  # if the loan is accepted, regardless of expiry
+        # if the loan is accepted, regardless of expiry
+        elif loan['accepted']:
             return LoanStatusType.ACCEPTED
 
         raise ValueError("Unable to determine loan status")

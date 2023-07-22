@@ -12,6 +12,10 @@ from ipfskvs.index import Index
 from ipfskvs.store import Store
 
 import pandas as pd
+import logging
+
+LOG = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
 
 
 class LoanReader():
@@ -82,7 +86,8 @@ class LoanReader():
             return df
 
         # filter for unexpired and unaccepted loans
-        df['loan_status'] = df.apply(LoanStatus.loan_status)
+        LOG.debug("Filtering for status: %s", status)
+        df['loan_status'] = df.apply(LoanStatus.loan_status, axis=1)
         df = df[df['loan_status'] == status]
         if df.empty:
             return df
