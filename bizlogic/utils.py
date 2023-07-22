@@ -4,6 +4,11 @@ from ipfskvs.store import Store
 
 import pandas as pd
 
+import logging
+
+LOG = logging.getLogger(__name__)
+LOG.setLevel(logging.DEBUG)
+
 
 class ParserType:
     """The type of protobuf object."""
@@ -84,6 +89,7 @@ class Utils:
         Returns:
             datetime.date: The offer expiry
         """
+        LOG.debug(f"Parsing: {store.reader}")
         return datetime.datetime.fromtimestamp(
             store.reader.offer_expiry.seconds + store.reader.offer_expiry.nanos / 1e9  # noqa: E501
         )
