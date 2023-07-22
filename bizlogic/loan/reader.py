@@ -1,5 +1,8 @@
 
-from typing import Self
+from typing import List, Self
+import json
+
+from google.protobuf.json_format import MessageToDict
 
 from bizlogic.loan import PREFIX
 from bizlogic.loan.status import LoanStatus, LoanStatusType
@@ -42,7 +45,7 @@ class LoanReader():
             pd.DataFrame: The open loan offers for the borrower.
         """
         return self.query_for_status(
-            status=LoanStatus.PENDING_ACCEPTANCE,
+            status=LoanStatusType.PENDING_ACCEPTANCE,
             index=Index(
                 prefix=PREFIX,
                 index={
@@ -209,3 +212,41 @@ class LoanReader():
             df = Utils.get_most_recent(df, GROUP_BY[ParserType.LOAN])
 
         return df
+
+    def query_for_loan_details(
+            self: Self,
+            loan_id: str,
+            recent_only: bool = True) -> List[Loan]:
+        """Query for a specific loan and return all the loan data.
+
+        Args:
+            loan_id (str): The loan to query for.
+            recent_only (bool, optional): Include previous updates or
+                only get the most recent. Defaults to True.
+
+        Returns:
+            str: The loan with the specified id in JSON format.
+        """
+        loans = Store.query(
+            query_index=Index(
+                prefix=PREFIX,
+                index={
+                    "loan": loan_id
+                },
+                size=3
+            ),
+            ipfs=self.ipfsclient,
+            reader=Loan()
+        )
+
+        loan_data = []
+        for loan in loans:
+            # convert the protobuf message to a Python dict
+            loan_dict = MessageToDict(loan.reader)
+            loan_data.append(loan_dict)
+
+        # if recent_only is set to True, only return the most recent loan data
+        if recent_only and loan_data:
+            loan_data = [max(loan_data, key=lambda x: x['updateTime'])]
+
+        return json.dumps(loan_data)
