@@ -1,4 +1,5 @@
 import datetime
+import pytz
 
 from ipfskvs.store import Store
 
@@ -80,18 +81,19 @@ class Utils:
         return df
 
     @staticmethod
-    def parse_offer_expiry(store: Store) -> datetime.date:
+    def parse_offer_expiry(store: Store) -> datetime.datetime:
         """Get the offer expiry timestamp as a datetime.
 
         Args:
             store (Store): The store object to parse
 
         Returns:
-            datetime.date: The offer expiry
+            datetime: The offer expiry in UTC timezone
         """
         LOG.debug(f"Parsing: {store.reader}")
         return datetime.datetime.fromtimestamp(
-            store.reader.offer_expiry.seconds + store.reader.offer_expiry.nanos / 1e9  # noqa: E501
+            store.reader.offer_expiry.seconds + store.reader.offer_expiry.nanos / 1e9,  # noqa: E501
+            tz=pytz.UTC
         )
 
 
