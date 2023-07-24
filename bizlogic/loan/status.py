@@ -1,9 +1,7 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timezone
 from enum import Enum
 
 from bizlogic.protoc.loan_pb2 import Loan
-
-from google.protobuf.timestamp_pb2 import Timestamp
 
 
 class LoanStatusType(Enum):
@@ -27,7 +25,7 @@ class LoanStatus():
         Returns:
             LoanStatusType: the status of the loan
         """
-        now = datetime.now()
+        now = datetime.now(timezone.utc)
 
         # if the loan has not expired and is not accepted
         if loan['offer_expiry'] > now and not loan['accepted']:

@@ -243,10 +243,16 @@ class LoanReader():
         for loan in loans:
             # convert the protobuf message to a Python dict
             loan_dict = MessageToDict(loan.reader)
+
+            # extract and add metadata to the loan dictionary
+            metadata = loan.index.get_metadata()
+            loan_dict["metadata"] = metadata
+
             loan_data.append(loan_dict)
 
         # if recent_only is set to True, only return the most recent loan data
+        LOG.debug("Loan details: %s", loan_data)
         if recent_only and loan_data:
-            loan_data = [max(loan_data, key=lambda x: x['updateTime'])]
+            loan_data = [max(loan_data, key=lambda row: row['metadata'].get('created', ''))]
 
-        return json.dumps(loan_data)
+        return loan_data
