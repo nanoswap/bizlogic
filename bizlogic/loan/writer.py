@@ -39,7 +39,8 @@ class LoanWriter():
             principal_amount: int,
             repayment_schedule: List[LoanPayment],
             offer_expiry: datetime.date,
-            secret_manager: SecretManager) -> None:
+            secret_manager: SecretManager,
+            project: str) -> None:
         """Construct a new unaccepted loan and write it.
 
         The loan is not accepted until the borrower signs it.
@@ -53,6 +54,9 @@ class LoanWriter():
             offer_expiry: the expiry date of the loan offer
             secret_manager: the secret manager to use for
                 storing wallet private keys
+            project: the project to use for wallet creation (the project to
+                use in Google Secret Manager for storing the private keys
+                of the created wallets)
         """
         self.loan_id = str(uuid.uuid4())
         self.borrower = borrower
@@ -68,10 +72,30 @@ class LoanWriter():
         )
 
         # Create deposit wallets
-        self.create_wallets(secret_manager)
+        self.create_wallets(secret_manager, project)
 
     @staticmethod
-    def from_data(ipfs: Ipfs, data: Store, wallet_manager: WalletManager, secret_manager: SecretManager) -> Self:
+    def from_data(
+            ipfs: Ipfs,
+            data: Store,
+            wallet_manager: WalletManager,
+            secret_manager: SecretManager,
+            project: str) -> Self:
+        """Construct a new loan from existing data.
+
+        Args:
+            ipfs: the ipfs client
+            data: the loan data
+            wallet_manager: the wallet manager
+            secret_manager: the secret manager to use for
+                storing wallet private keys
+            project: the project to use for wallet creation (the project to
+                use in Google Secret Manager for storing the private keys
+                of the created wallets)
+
+        Returns:
+            LoanWriter: the loan writer
+        """
         writer = LoanWriter(
             ipfs=ipfs,
             borrower=data.index["borrower"],
@@ -83,25 +107,39 @@ class LoanWriter():
             secret_manager=secret_manager
         )
         # Create deposit wallets
-        writer._create_wallets()
+        writer.create_wallets(secret_manager, project)
 
         return writer
 
-    def create_wallets(self: Self, secret_manager: SecretManager) -> None:
+    def create_wallets(
+            self: Self,
+            secret_manager: SecretManager,
+            project: str) -> None:
         """Create deposit wallets for borrower and lender.
 
         The borrower deposit wallet is for the principal and
         the lender deposit wallet is for the repayments.
+
+        Args:
+            secret_manager: the secret manager to use for
+                storing wallet private keys
+            project: the project to use for wallet creation (the project to
+                use in Google Secret Manager for storing the private keys
+                of the created wallets)
         """
         # Borrower's deposit wallet
         borrower_wallet_name = f"{self.loan_id}_borrower_deposit_wallet"
         borrower_wallet_id, borrower_account_address = \
-            WalletManager(secret_manager).create_wallet(borrower_wallet_name)
+            WalletManager(secret_manager).create_wallet(
+                project, borrower_wallet_name
+            )
 
         # Lender's deposit wallet
         lender_wallet_name = f"{self.loan_id}_lender_deposit_wallet"
         lender_wallet_id, lender_account_address = \
-            WalletManager(secret_manager).create_wallet(lender_wallet_name)
+            WalletManager(secret_manager).create_wallet(
+                project, lender_wallet_name
+            )
 
         # Check if wallets created successfully
         if not borrower_wallet_id or not lender_wallet_id:
