@@ -13,6 +13,8 @@ from ipfsclient.ipfs import Ipfs
 
 from ipfskvs.index import Index
 from ipfskvs.store import Store
+from nanohelp.secret import SecretManager
+from nanohelp.wallet import WalletManager
 
 
 class LoanWriter():
@@ -36,7 +38,8 @@ class LoanWriter():
             lender: str,
             principal_amount: int,
             repayment_schedule: List[LoanPayment],
-            offer_expiry: datetime.date) -> None:
+            offer_expiry: datetime.date,
+            secret_manager: SecretManager) -> None:
         """Construct a new unaccepted loan and write it.
 
         The loan is not accepted until the borrower signs it.
@@ -48,6 +51,8 @@ class LoanWriter():
             principal_amount: the principal amount of the loan
             repayment_schedule: the repayment schedule of the loan
             offer_expiry: the expiry date of the loan offer
+            secret_manager: the secret manager to use for
+                storing wallet private keys
         """
         self.loan_id = str(uuid.uuid4())
         self.borrower = borrower
@@ -62,25 +67,45 @@ class LoanWriter():
             accepted=False
         )
 
+        # Create deposit wallets
+        self.create_wallets(secret_manager)
+
     @staticmethod
-    def from_data(ipfs: Ipfs, data: Store) -> Self:
-        """Construct a loan from data.
-
-        Args:
-            ipfs: the ipfs client
-            data: the data to construct the loan from
-
-        Returns:
-            LoanWriter: the constructed loan
-        """
-        return LoanWriter(
+    def from_data(ipfs: Ipfs, data: Store, wallet_manager: WalletManager, secret_manager: SecretManager) -> Self:
+        writer = LoanWriter(
             ipfs=ipfs,
             borrower=data.index["borrower"],
             lender=data.index["lender"],
             principal_amount=data.reader.principal_amount,
             repayment_schedule=data.reader.repayment_schedule,
-            offer_expiry=data.reader.offer_expiry
+            offer_expiry=data.reader.offer_expiry,
+            wallet_manager=wallet_manager,
+            secret_manager=secret_manager
         )
+        # Create deposit wallets
+        writer._create_wallets()
+
+        return writer
+
+    def create_wallets(self: Self, secret_manager: SecretManager) -> None:
+        """Create deposit wallets for borrower and lender.
+
+        The borrower deposit wallet is for the principal and
+        the lender deposit wallet is for the repayments.
+        """
+        # Borrower's deposit wallet
+        borrower_wallet_name = f"{self.loan_id}_borrower_deposit_wallet"
+        borrower_wallet_id, borrower_account_address = \
+            WalletManager(secret_manager).create_wallet(borrower_wallet_name)
+
+        # Lender's deposit wallet
+        lender_wallet_name = f"{self.loan_id}_lender_deposit_wallet"
+        lender_wallet_id, lender_account_address = \
+            WalletManager(secret_manager).create_wallet(lender_wallet_name)
+
+        # Check if wallets created successfully
+        if not borrower_wallet_id or not lender_wallet_id:
+            raise Exception("Error during wallets creation. Loan initiation failed.")
 
     def write(self: Self) -> None:
         """Write the loan to IPFS."""
