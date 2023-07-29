@@ -1,8 +1,11 @@
 requests
 setuptools
 py-multicodec
+
+# Nano Swap packages
 ipfsclient
 ipfskvs
+nanohelp
 
 # for testing
 nox

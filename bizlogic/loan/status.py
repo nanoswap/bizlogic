@@ -10,6 +10,7 @@ class LoanStatusType(Enum):
     PENDING_ACCEPTANCE = 1
     EXPIRED_UNACCEPTED = 2
     ACCEPTED = 3
+    DRAFT = 4
 
 
 class LoanStatus():
@@ -27,8 +28,13 @@ class LoanStatus():
         """
         now = datetime.now(timezone.utc)
 
+        # if the loan has no transaction, it is a draft
+        # TODO: check if transaction is valid
+        if 'transaction' not in loan.keys():
+            return LoanStatusType.DRAFT
+
         # if the loan has not expired and is not accepted
-        if loan['offer_expiry'] > now and not loan['accepted']:
+        elif loan['offer_expiry'] > now and not loan['accepted']:
             return LoanStatusType.PENDING_ACCEPTANCE
 
         # if the loan has expired and is not accepted
