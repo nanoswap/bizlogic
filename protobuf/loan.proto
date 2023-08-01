@@ -18,6 +18,7 @@ message Loan {
     int64 principal_amount = 1;
     repeated LoanPayment repayment_schedule = 2;
     google.protobuf.Timestamp offer_expiry = 3;
-    optional string transaction = 4; // for accepted lending offers, this is the transaction id of the principal payment
-    bool accepted = 5; // accepted timestamp must be before offer_expiry
+    bool accepted = 4; // accepted timestamp must be before offer_expiry
+    string lender_deposit_wallet = 5;
+    string borrower_deposit_wallet = 6;
 }
