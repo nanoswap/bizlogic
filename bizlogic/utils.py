@@ -105,9 +105,10 @@ PARSERS = {
     ParserType.LOAN: {
         "principal": lambda store: store.reader.principal_amount,
         "offer_expiry": Utils.parse_offer_expiry,
-        "transaction": lambda store: store.reader.transaction,
         "accepted": lambda store: store.reader.accepted,
-        "payments": lambda store: len(store.reader.repayment_schedule)
+        "payments": lambda store: len(store.reader.repayment_schedule),
+        "lender_deposit_wallet": lambda store: store.reader.lender_deposit_wallet,  # noqa: E501
+        "borrower_deposit_wallet": lambda store: store.reader.borrower_deposit_wallet  # noqa: E501
     },
     ParserType.VOUCH: {}  # no content needed to parse for vouchers
 }

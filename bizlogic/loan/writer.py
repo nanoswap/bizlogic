@@ -30,6 +30,8 @@ class LoanWriter():
     index: Index
     data: Loan
     ipfsclient: Ipfs
+    borrower_wallet: str
+    lender_wallet: str
 
     def __init__(
             self: Self,
@@ -64,15 +66,18 @@ class LoanWriter():
         self.ipfsclient = ipfs
         timestamp = Timestamp()
         timestamp.FromDatetime(offer_expiry)
+
+        # Create deposit wallets
+        self.create_wallets(secret_manager, project)
+
         self.data = Loan(
             principal_amount=principal_amount,
             repayment_schedule=repayment_schedule,
             offer_expiry=timestamp,
-            accepted=False
+            accepted=False,
+            borrower_deposit_wallet=self.borrower_wallet,
+            lender_deposit_wallet=self.lender_wallet
         )
-
-        # Create deposit wallets
-        self.create_wallets(secret_manager, project)
 
     @staticmethod
     def from_data(
@@ -104,10 +109,9 @@ class LoanWriter():
             repayment_schedule=data.reader.repayment_schedule,
             offer_expiry=data.reader.offer_expiry,
             wallet_manager=wallet_manager,
-            secret_manager=secret_manager
+            secret_manager=secret_manager,
+            project=project
         )
-        # Create deposit wallets
-        writer.create_wallets(secret_manager, project)
 
         return writer
 
@@ -142,8 +146,15 @@ class LoanWriter():
             )
 
         # Check if wallets created successfully
-        if not borrower_wallet_id or not lender_wallet_id:
+        if not all([
+                borrower_wallet_id,
+                lender_wallet_id,
+                borrower_account_address,
+                lender_account_address]):
             raise Exception("Error during wallets creation. Loan initiation failed.")
+
+        self.borrower_wallet = borrower_account_address
+        self.lender_wallet = lender_account_address
 
     def write(self: Self) -> None:
         """Write the loan to IPFS."""
