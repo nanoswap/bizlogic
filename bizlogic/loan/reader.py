@@ -30,6 +30,41 @@ class LoanReader():
         """Create a Loan Reader."""
         self.ipfsclient = ipfsclient
 
+    def get_all_loans(
+            self: Self,
+            recent_only: bool = True) -> pd.DataFrame:
+        """Get all loans.
+
+        Args:
+            recent_only (bool, optional): Include previous updates or
+                only get the most recent. Defaults to True.
+
+        Returns:
+            pd.DataFrame: The loans.
+        """
+        loans = Store.query(
+            query_index=Index(
+                prefix=PREFIX,
+                index={}
+            ),
+            ipfs=self.ipfsclient,
+            reader=Loan()
+        )
+
+        # parse results into a dataframe
+        df = Store.to_dataframe(loans, PARSERS[ParserType.LOAN])
+        if df.empty:
+            return df
+
+        # add loan status to dataframe
+        df['loan_status'] = df.apply(LoanStatus.loan_status, axis=1)
+
+        # filter for most recent applications per loan_id
+        if recent_only:
+            df = Utils.get_most_recent(df, GROUP_BY[ParserType.LOAN])
+
+        return df
+
     def get_open_loan_offers(
             self: Self,
             borrower: str,
