@@ -160,6 +160,8 @@ class LoanApplicationReader():
             applications,
             PARSERS[ParserType.LOAN_APPLICATION]
         )
+        if df.empty:
+            return df
 
         # filter for most recent applications per loan_id
         df = Utils.get_most_recent(df, GROUP_BY[ParserType.LOAN_APPLICATION])
@@ -198,6 +200,8 @@ class LoanApplicationReader():
             applications,
             PARSERS[ParserType.LOAN_APPLICATION]
         )
+        if df.empty:
+            return df
 
         # filter for most recent applications per loan_id
         df = Utils.get_most_recent(df, GROUP_BY[ParserType.LOAN_APPLICATION])

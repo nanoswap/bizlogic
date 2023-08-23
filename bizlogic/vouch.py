@@ -120,6 +120,8 @@ class VouchReader():
 
         # parse applications into a dataframe
         df = Store.to_dataframe(query_results, PARSERS[ParserType.VOUCH])
+        if df.empty:
+            return df
 
         # filter for most recent applications per loan_id
         return Utils.get_most_recent(df, GROUP_BY[ParserType.VOUCH])
@@ -160,6 +162,8 @@ class VouchReader():
 
         # parse applications into a dataframe
         df = Store.to_dataframe(query_results, PARSERS[ParserType.VOUCH])
+        if df.empty:
+            return df
 
         # filter for most recent applications per loan_id
         return Utils.get_most_recent(df, GROUP_BY[ParserType.VOUCH])
