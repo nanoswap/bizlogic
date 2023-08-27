@@ -5,6 +5,8 @@
     options:
       members:
         - __init__
+        - from_data
+        - _create_wallets
         - write
         - _generate_index
         - accept_terms

@@ -68,7 +68,7 @@ class LoanWriter():
         timestamp.FromDatetime(offer_expiry)
 
         # Create deposit wallets
-        self.create_wallets(secret_manager, project)
+        self._create_wallets(secret_manager, project)
 
         self.data = Loan(
             principal_amount=principal_amount,
@@ -115,7 +115,7 @@ class LoanWriter():
 
         return writer
 
-    def create_wallets(
+    def _create_wallets(
             self: Self,
             secret_manager: SecretManager,
             project: str) -> None:
